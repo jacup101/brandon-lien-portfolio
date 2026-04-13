@@ -3,49 +3,119 @@ import { Button, Col, Container, Form, Row } from 'react-bootstrap';
 import './AboutPage.css';
 
 function AboutPage() {
-  const [submitted, setSubmitted] = useState(false);
+  const [status, setStatus] = useState<'idle' | 'submitting' | 'success' | 'error'>('idle');
 
-  const handleSubmit = (event: FormEvent<HTMLFormElement>) => {
+  const handleSubmit = async (event: FormEvent<HTMLFormElement>) => {
     event.preventDefault();
-    setSubmitted(true);
+
+    const form = event.currentTarget;
+    const formData = new FormData(form);
+
+    setStatus('submitting');
+
+    try {
+      const response = await fetch('https://formsubmit.co/ajax/brandonlienaudio@gmail.com', {
+        method: 'POST',
+        headers: {
+          Accept: 'application/json',
+        },
+        body: formData,
+      });
+
+      const result = await response.json();
+
+      if (response.ok && result.success === 'true') {
+        setStatus('success');
+        form.reset();
+        return;
+      }
+
+      setStatus('error');
+    } catch {
+      setStatus('error');
+    }
   };
 
   return (
     <main className="about-page">
       <Container>
+        <section className="about-hero">
+          <div className="about-hero-media">
+            <div className="about-portrait-frame">
+              <img
+                className="about-portrait"
+                src="/assets/about-web/portrait-main.jpg"
+                alt="Portrait of Brandon Lien"
+                loading="eager"
+                decoding="async"
+                fetchPriority="high"
+              />
+            </div>
+          </div>
+
+          <div className="about-hero-copy">
+            <p className="about-kicker">About Me</p>
+            <h1 className="about-title">Brandon Lien</h1>
+            <p className="about-lead">
+              Vietnamese and Teochew American artist from Los Angeles working across
+              post-production sound, filmmaking, and music.
+            </p>
+
+            <div className="about-link-row" aria-label="External links">
+              <a
+                className="about-link-icon about-link-icon-instagram"
+                href="https://www.instagram.com/brandonlien_/"
+                target="_blank"
+                rel="noreferrer"
+                aria-label="Instagram"
+              />
+              <a
+                className="about-link-icon about-link-icon-imdb"
+                href="https://www.imdb.com/name/nm11744121"
+                target="_blank"
+                rel="noreferrer"
+                aria-label="IMDb"
+              />
+            </div>
+          </div>
+        </section>
+
         <Row className="justify-content-center">
           <Col xl={10}>
-            <section className="about-section">
-              <p className="about-kicker">About Me</p>
-              <h1 className="about-title">Brandon Lien</h1>
-
-              <div className="about-copy">
+            <section className="about-section about-copy-section">
+              <div className="about-copy-grid">
                 <p>
                   My name is Brandon Lien, and I&apos;m a Vietnamese and Teochew American
                   artist from Los Angeles, CA. My personal philosophy is to stay adaptable
                   and be willing to learn from any discipline. All of my interests,
                   experiences, and work are a part of who I am professionally and
-                  artistically. And as a reflection of this eclectic array of things I
-                  connect with, I hope that my work can also connect with someone and share
-                  a moment of vulnerability.
+                  artistically.
                 </p>
 
                 <p>
-                  My work in film primarily centers around sound design and video editing,
-                  but I have also done directing and cinematography. I graduated from
-                  California State University Northridge in 2022 with a Bachelor of Arts in
-                  Cinema and Television Arts and started my career in post production sound
-                  with internships at Formosa Group and Enhanced Media. I have also worked
-                  with the Tom &amp; Ethel Bradley Center, Museum of Social Justice, and
-                  Guitar Foundation of America on projects.
+                  I am a sound artist with a wide array of experience, from sound design,
+                  mixing in stereo and surround, dialogue editing, sound effects editing,
+                  foley, field recording, and file delivery. I take pride in being a trusted
+                  collaborator that can ideate creative and technical solutions to challenges.
                 </p>
 
                 <p>
-                  As a musician, I have released two albums (with one more on the way) and
-                  have worked on multiple collaborations.
+                  I graduated from California State University Northridge in 2022 with a
+                  Bachelor of Arts in Film Production and started my career in post
+                  production sound with internships at Formosa Group and Enhanced Media.
+                  Since then, my work has screened at numerous film festivals, theaters, and
+                  streaming services like Amazon Prime, Lifetime, and Tubi.
                 </p>
 
                 <p>
+                  In other areas of filmmaking, I have experience doing video editing,
+                  directing, and cinematography. I have worked with the Tom &amp; Ethel
+                  Bradley Center, Museum of Social Justice, and Guitar Foundation of America
+                  on projects. As a musician, I have released two albums (with one more on
+                  the way) and have worked on multiple collaborations.
+                </p>
+
+                <p className="about-copy-closing">
                   This website serves as a portfolio, a journal, a love letter, and a
                   representation of the multitudes of things that make up who I am. Thanks
                   for visiting.
@@ -53,13 +123,47 @@ function AboutPage() {
               </div>
             </section>
 
-            <section className="about-section">
+            <section className="about-image-strip about-section" aria-label="Additional portraits">
+              <div className="about-strip-image-frame">
+                <img
+                  src="/assets/about-web/banner-1.jpg"
+                  alt="Brandon Lien portrait"
+                  className="about-strip-image"
+                  loading="lazy"
+                  decoding="async"
+                />
+              </div>
+              <div className="about-strip-image-frame">
+                <img
+                  src="/assets/about-web/banner-2.jpg"
+                  alt="Brandon Lien portrait"
+                  className="about-strip-image"
+                  loading="lazy"
+                  decoding="async"
+                />
+              </div>
+              <div className="about-strip-image-frame">
+                <img
+                  src="/assets/about-web/banner-3.jpg"
+                  alt="Brandon Lien portrait"
+                  className="about-strip-image"
+                  loading="lazy"
+                  decoding="async"
+                />
+              </div>
+            </section>
+
+            <section className="about-section about-contact-section">
               <div className="about-contact-header">
                 <p className="about-kicker">Contact</p>
-                <h2 className="about-subtitle">Contact Me</h2>
+                <h2 className="about-subtitle">Get In Touch</h2>
               </div>
 
               <Form className="about-form" onSubmit={handleSubmit}>
+                <input type="hidden" name="_subject" value="New message from Brandon Lien Portfolio" />
+                <input type="hidden" name="_template" value="table" />
+                <input type="hidden" name="_honey" />
+
                 <Row className="g-3">
                   <Col md={6}>
                     <Form.Group controlId="contactName">
@@ -78,7 +182,12 @@ function AboutPage() {
                   <Col xs={12}>
                     <Form.Group controlId="contactSubject">
                       <Form.Label>Subject</Form.Label>
-                      <Form.Control type="text" name="subject" placeholder="What are you reaching out about?" required />
+                      <Form.Control
+                        type="text"
+                        name="subject"
+                        placeholder="What are you reaching out about?"
+                        required
+                      />
                     </Form.Group>
                   </Col>
 
@@ -97,12 +206,16 @@ function AboutPage() {
                 </Row>
 
                 <div className="about-form-actions">
-                  <Button type="submit" className="about-submit-button">
-                    Send Message
+                  <Button type="submit" className="about-submit-button" disabled={status === 'submitting'}>
+                    {status === 'submitting' ? 'Sending...' : 'Send Message'}
                   </Button>
-                  {submitted ? (
-                    <p className="about-form-note">
-                      Thanks. The form layout is ready and can be wired to a backend or email service next.
+                  {status === 'success' ? (
+                    <p className="about-form-status">Message sent successfully.</p>
+                  ) : null}
+                  {status === 'error' ? (
+                    <p className="about-form-status about-form-status-error">
+                      FormSubmit may still need its first-time activation email confirmed for
+                      `brandonlienaudio@gmail.com`.
                     </p>
                   ) : null}
                 </div>

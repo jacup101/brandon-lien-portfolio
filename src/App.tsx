@@ -10,7 +10,8 @@ import NavBarComponent from './components/util/NavBarComponent';
 
 function AppShell() {
   const navLinks = [
-    { path: "/", label: "Post-Production Sound" },
+    { path: "/", label: "Home" },
+    { path: "/post-production-sound", label: "Post-Production Sound" },
     { path: "/about", label: "About" },
   ];
 
@@ -20,6 +21,7 @@ function AppShell() {
       <div className='page-content-padding'>
         <Routes>
           <Route path="/" element={<LandingPage />} />
+          <Route path="/post-production-sound" element={<FilmsPage />} />
           <Route path="/about" element={<AboutPage />} />
           <Route path="/archive" element={<HomePage />} />
           <Route path="/films" element={<FilmsPage />} />

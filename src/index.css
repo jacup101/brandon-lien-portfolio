@@ -1,10 +1,61 @@
+.site-navbar {
+  background: rgba(11, 11, 11, 0.82);
+  border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+  backdrop-filter: blur(18px);
+}
+
+.site-navbar-brand {
+  color: var(--site-text) !important;
+  font-size: 0.96rem;
+  font-weight: 600;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+}
+
+.site-navbar-links {
+  gap: 0.4rem;
+}
+
+.site-navbar-link {
+  color: var(--site-muted) !important;
+  font-size: 0.82rem;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+}
+
+.site-navbar-link:hover,
+.site-navbar-link:focus,
+.site-navbar-link.active {
+  color: var(--site-text) !important;
+}
+
+.site-navbar-toggle {
+  border: 1px solid rgba(255, 255, 255, 0.14) !important;
+  border-radius: 0 !important;
+}
+
+:root {
+  --site-bg: #0b0b0b;
+  --site-bg-elevated: #121212;
+  --site-bg-soft: #171717;
+  --site-text: #f3efe8;
+  --site-muted: rgba(243, 239, 232, 0.68);
+  --site-faint: rgba(243, 239, 232, 0.42);
+  --site-border: rgba(255, 255, 255, 0.1);
+  --site-accent: #c9a46a;
+  --site-accent-soft: rgba(201, 164, 106, 0.18);
+  color-scheme: dark;
+}
+
 .app-root {
   min-height: 100vh;
-  font-family: "Segoe UI", "Helvetica Neue", Arial, sans-serif;
+  font-family: "Avenir Next", "Segoe UI", Helvetica, Arial, sans-serif;
   line-height: 1.5;
   font-weight: 400;
-  color: #17120f;
-  background: #f4efe6;
+  color: var(--site-text);
+  background:
+    radial-gradient(circle at top, rgba(201, 164, 106, 0.08), transparent 28%),
+    var(--site-bg);
 
   font-synthesis: none;
   text-rendering: optimizeLegibility;
@@ -12,9 +63,17 @@
   -moz-osx-font-smoothing: grayscale;
 }
 
+html,
 body {
   margin: 0;
-  background: #f4efe6;
+  background: var(--site-bg);
+}
+
+#root {
+  min-height: 100vh;
+  background:
+    radial-gradient(circle at top, rgba(201, 164, 106, 0.08), transparent 28%),
+    var(--site-bg);
 }
 
 a {

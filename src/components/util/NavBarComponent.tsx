@@ -9,22 +9,20 @@ interface NavbarProps {
 const NavBarComponent: React.FC<NavbarProps> = ({ brand, links }) => {
     return (
       <Navbar
-        bg="dark"
-        variant="dark"
         expand="lg"
         fixed="top"
-        style={{ background: 'rgba(17, 17, 17, 0.92)', backdropFilter: 'blur(14px)' }}
+        className="site-navbar"
       >
         <Container fluid="lg">
           <LinkContainer to="/">
-            <Navbar.Brand>{brand}</Navbar.Brand>
+            <Navbar.Brand className="site-navbar-brand">{brand}</Navbar.Brand>
           </LinkContainer>
-          <Navbar.Toggle aria-controls="basic-navbar-nav" />
+          <Navbar.Toggle aria-controls="basic-navbar-nav" className="site-navbar-toggle" />
           <Navbar.Collapse id="basic-navbar-nav">
-            <Nav className="ms-auto">
+            <Nav className="ms-auto site-navbar-links">
               {links.map((link, index) => (
                 <LinkContainer key={index} to={link.path}>
-                  <Nav.Link>{link.label}</Nav.Link>
+                  <Nav.Link className="site-navbar-link">{link.label}</Nav.Link>
                 </LinkContainer>
               ))}
             </Nav>

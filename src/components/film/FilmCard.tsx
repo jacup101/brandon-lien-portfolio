@@ -1,30 +1,19 @@
-import { useEffect, useState } from "react";
 import { Image, Stack } from "react-bootstrap";
-import { DEFAULT_FILM_DATA, FilmData } from "../../types/FilmData";
+import { DEFAULT_POST_PRODUCTION_WORK, PostProductionWork } from "../../types/PostProductionWork";
 import "./FilmCard.css";
+import { POST_PRODUCTION_WORK } from "../../data/postProductionWork";
 
 interface FilmCardProps {
-  filmData?: FilmData;
+  filmData?: PostProductionWork;
   filmName?: string;
   carousel: boolean;
 }
 
 function FilmCard(props: FilmCardProps) {
-  const [filmData, setFilmData] = useState<FilmData | null>(null);
-
-  useEffect(() => {
-    if (props.filmData) {
-      setFilmData(props.filmData);
-    }
-  }, [props.filmData]);
-
-  useEffect(() => {
-    if (!props.filmData) {
-      import(`../../data/film/${props.filmName}.json`)
-        .then((res) => setFilmData(res.default))
-        .catch((_) => setFilmData(DEFAULT_FILM_DATA));
-    }
-  }, [props.filmName]);
+  const filmData =
+    props.filmData ??
+    POST_PRODUCTION_WORK.find((film) => film.title === props.filmName) ??
+    DEFAULT_POST_PRODUCTION_WORK;
 
   if (!filmData) {
     return null;
@@ -41,7 +30,8 @@ function FilmCard(props: FilmCardProps) {
       </div>
       <div className="film-copy">
         <p className="film-card-title">{filmData.title}</p>
-        <p className="film-card-year">{filmData.year}</p>
+        <p className="film-card-role">{filmData.role}</p>
+        <p className="film-card-year">{filmData.type}</p>
       </div>
     </Stack>
   );
@@ -57,7 +47,8 @@ function FilmCard(props: FilmCardProps) {
       </div>
       <div className="film-details">
         <p className="film-card-title-carousel">{filmData.title}</p>
-        <p className="film-card-year">{filmData.year}</p>
+        <p className="film-card-role">{filmData.role}</p>
+        <p className="film-card-year">{filmData.type}</p>
       </div>
     </Stack>
   );

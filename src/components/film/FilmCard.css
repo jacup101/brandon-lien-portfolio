@@ -101,6 +101,13 @@
   overflow-wrap: break-word;
 }
 
+.film-card-role {
+  font-size: 0.95rem;
+  color: var(--primary-color);
+  margin: 0;
+  line-height: 1.5;
+}
+
 .film-card-year {
   font-size: 0.95rem;
   color: var(--secondary-color);

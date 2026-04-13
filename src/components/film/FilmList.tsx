@@ -1,56 +1,25 @@
-// filepath: /Users/joshuapulido/Volumes/workplace/josh-portfolio/src/components/film/FilmList.tsx
-import { useEffect, useState } from "react";
-import { Carousel, Col, Container, Row, Spinner } from "react-bootstrap";
+import { useState } from "react";
+import { Carousel, Col, Container, Row } from "react-bootstrap";
 import FilmCard from "./FilmCard";
 import './FilmList.css';
-import { FilmData } from "../../types/FilmData";
+import { PostProductionWork } from "../../types/PostProductionWork";
+import { POST_PRODUCTION_WORK } from "../../data/postProductionWork";
 
 interface FilmListProps {
-  filmNames: string[];
+  filmNames?: string[];
   carousel: boolean;
 }
 
 
 function FilmList(props: FilmListProps) {
-  const [loading, setLoading] = useState(true);
-  const [filmData, setFilmData] = useState<FilmData[]>([]);
   const [activeIndex, setActiveIndex] = useState(0);
-
-
-  useEffect(() => {
-    console.log("test");
-    const loadFilmData = async () => {
-      const data = await Promise.all(
-        props.filmNames.map(async (filmName) => {
-          try {
-            const res = await import(`../../data/film/${filmName}.json`);
-            console.log(res);
-            return res.default;
-          } catch {
-            return null;
-          }
-        })
-      );
-      setFilmData(data.filter((item) => item !== null));
-      setLoading(false);
-    };
-
-    loadFilmData();
-  }, []);
+  const filmData: PostProductionWork[] = props.filmNames?.length
+    ? POST_PRODUCTION_WORK.filter((film) => props.filmNames?.includes(film.title))
+    : POST_PRODUCTION_WORK;
 
   const handleSelect = (selectedIndex: number) => {
     setActiveIndex(selectedIndex);
   };
-
-  if (loading) {
-    return (
-      <div className="film-list-loading">
-        <Spinner animation="border" role="status" className="spinner-border">
-          <span className="visually-hidden">Loading...</span>
-        </Spinner>
-      </div>
-    );
-  }
   
   const grid = <Container fluid="xxl" className="film-list">
   <Row>
