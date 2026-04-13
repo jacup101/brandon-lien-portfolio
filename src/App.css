@@ -1,0 +1,11 @@
+#root {
+  min-height: 100vh;
+}
+
+.page-content-padding {
+  padding-top: 56px;
+}
+
+.page-content-no-padding {
+  padding-top: 0;
+}

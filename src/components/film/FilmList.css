@@ -1,0 +1,51 @@
+:root {
+  --spinner-color: #222222;
+  --carousel-arrow-color: #2e241d;
+}
+
+.film-list-loading {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  min-height: 40vh;
+}
+
+.film-list-loading .spinner-border {
+  color: var(--spinner-color);
+}
+
+.film-list {
+  padding: 0;
+}
+
+.film-carousel {
+  width: 100%;
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 0 3.75rem 1rem;
+}
+
+.carousel-control-prev-icon,
+.carousel-control-next-icon {
+  background-color: var(--carousel-arrow-color);
+  background-size: 100%, 100%;
+  border-radius: 50%;
+}
+
+.carousel-control-prev-icon {
+    background-image: url("data:image/svg+xml;charset=utf8,%3Csvg xmlns='http://www.w3.org/2000/svg' fill='%23ffffff' viewBox='0 0 8 8'%3E%3Cpath d='M4.5 0L0 4l4.5 4V5h3V3h-3V0z'/%3E%3C/svg%3E");
+  }
+  
+  .carousel-control-next-icon {
+    background-image: url("data:image/svg+xml;charset=utf8,%3Csvg xmlns='http://www.w3.org/2000/svg' fill='%23ffffff' viewBox='0 0 8 8'%3E%3Cpath d='M3.5 0L8 4 3.5 8V5H0V3h3.5V0z'/%3E%3C/svg%3E");
+  }
+
+.carousel-indicators [data-bs-target] {
+  background-color: #7e6858;
+}
+
+@media (max-width: 767px) {
+  .film-carousel {
+    padding: 0 0 1rem;
+  }
+}
