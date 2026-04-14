@@ -6,6 +6,7 @@
   "scripts": {
     "dev": "vite",
     "build": "tsc -b && vite build",
+    "dev:pages": "npm run build && npx wrangler pages dev dist --persist-to /tmp/brandon-site-wrangler-state",
     "lint": "eslint .",
     "preview": "vite preview"
   },

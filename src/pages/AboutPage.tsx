@@ -1,37 +1,158 @@
-import { FormEvent, useState } from 'react';
+import { FormEvent, useEffect, useId, useRef, useState } from 'react';
 import { Button, Col, Container, Form, Row } from 'react-bootstrap';
 import './AboutPage.css';
 
+type FormStatus = 'idle' | 'submitting' | 'success' | 'error';
+
+const TURNSTILE_SCRIPT_ID = 'cf-turnstile-script';
+const turnstileSiteKey = import.meta.env.VITE_TURNSTILE_SITE_KEY;
+const bypassTurnstile = import.meta.env.VITE_BYPASS_TURNSTILE === 'true';
+
+function getErrorMessage(statusCode: number) {
+  if (statusCode === 400) {
+    return 'Please complete the captcha and double-check your message details.';
+  }
+
+  if (statusCode === 503) {
+    return 'The contact form is still being configured. Please try again soon.';
+  }
+
+  return 'Something went wrong while sending your message. Please try again.';
+}
+
 function AboutPage() {
-  const [status, setStatus] = useState<'idle' | 'submitting' | 'success' | 'error'>('idle');
+  const [status, setStatus] = useState<FormStatus>('idle');
+  const [errorMessage, setErrorMessage] = useState('');
+  const [turnstileToken, setTurnstileToken] = useState('');
+  const [isTurnstileReady, setIsTurnstileReady] = useState(false);
+  const turnstileContainerId = useId();
+  const widgetIdRef = useRef<string | null>(null);
+
+  useEffect(() => {
+    if (!turnstileSiteKey || bypassTurnstile) {
+      return;
+    }
+
+    const renderWidget = () => {
+      if (!window.turnstile || widgetIdRef.current) {
+        return;
+      }
+
+      const container = document.getElementById(turnstileContainerId);
+
+      if (!container) {
+        return;
+      }
+
+      widgetIdRef.current = window.turnstile.render(container, {
+        sitekey: turnstileSiteKey,
+        theme: 'light',
+        action: 'contact',
+        callback: (token) => {
+          setTurnstileToken(token);
+          setIsTurnstileReady(true);
+        },
+        'expired-callback': () => {
+          setTurnstileToken('');
+          setIsTurnstileReady(true);
+        },
+        'error-callback': () => {
+          setTurnstileToken('');
+          setIsTurnstileReady(true);
+        },
+      });
+
+      setIsTurnstileReady(true);
+    };
+
+    if (window.turnstile) {
+      renderWidget();
+      return;
+    }
+
+    const existingScript = document.getElementById(TURNSTILE_SCRIPT_ID) as HTMLScriptElement | null;
+
+    if (existingScript) {
+      existingScript.addEventListener('load', renderWidget);
+
+      return () => {
+        existingScript.removeEventListener('load', renderWidget);
+      };
+    }
+
+    const script = document.createElement('script');
+    script.id = TURNSTILE_SCRIPT_ID;
+    script.src = 'https://challenges.cloudflare.com/turnstile/v0/api.js?render=explicit';
+    script.async = true;
+    script.defer = true;
+    script.addEventListener('load', renderWidget);
+    document.head.appendChild(script);
+
+    return () => {
+      script.removeEventListener('load', renderWidget);
+      if (widgetIdRef.current && window.turnstile) {
+        window.turnstile.remove(widgetIdRef.current);
+        widgetIdRef.current = null;
+      }
+    };
+  }, [turnstileContainerId]);
 
   const handleSubmit = async (event: FormEvent<HTMLFormElement>) => {
     event.preventDefault();
 
     const form = event.currentTarget;
     const formData = new FormData(form);
+    const name = formData.get('name')?.toString().trim() ?? '';
+    const email = formData.get('email')?.toString().trim() ?? '';
+    const subject = formData.get('subject')?.toString().trim() ?? '';
+    const message = formData.get('message')?.toString().trim() ?? '';
+
+    if (!turnstileSiteKey && !bypassTurnstile) {
+      setErrorMessage('The contact form is missing its public captcha key.');
+      setStatus('error');
+      return;
+    }
+
+    if (!bypassTurnstile && !turnstileToken) {
+      setErrorMessage('Please complete the captcha before sending your message.');
+      setStatus('error');
+      return;
+    }
 
     setStatus('submitting');
+    setErrorMessage('');
 
     try {
-      const response = await fetch('https://formsubmit.co/ajax/brandonlienaudio@gmail.com', {
+      const response = await fetch('/api/contact', {
         method: 'POST',
         headers: {
-          Accept: 'application/json',
+          'Content-Type': 'application/json',
         },
-        body: formData,
+        body: JSON.stringify({
+          name,
+          email,
+          subject,
+          message,
+          turnstileToken: bypassTurnstile ? undefined : turnstileToken,
+        }),
       });
 
-      const result = await response.json();
-
-      if (response.ok && result.success === 'true') {
+      if (response.ok) {
         setStatus('success');
+        setTurnstileToken('');
         form.reset();
+
+        if (widgetIdRef.current && window.turnstile) {
+          window.turnstile.reset(widgetIdRef.current);
+        }
+
         return;
       }
 
+      setErrorMessage(getErrorMessage(response.status));
       setStatus('error');
     } catch {
+      setErrorMessage('Something went wrong while sending your message. Please try again.');
       setStatus('error');
     }
   };
@@ -160,10 +281,6 @@ function AboutPage() {
               </div>
 
               <Form className="about-form" onSubmit={handleSubmit}>
-                <input type="hidden" name="_subject" value="New message from Brandon Lien Portfolio" />
-                <input type="hidden" name="_template" value="table" />
-                <input type="hidden" name="_honey" />
-
                 <Row className="g-3">
                   <Col md={6}>
                     <Form.Group controlId="contactName">
@@ -205,8 +322,31 @@ function AboutPage() {
                   </Col>
                 </Row>
 
+                <div className="about-captcha-block">
+                  {bypassTurnstile ? (
+                    <p className="about-form-status">
+                      Captcha is bypassed for local development.
+                    </p>
+                  ) : turnstileSiteKey ? (
+                    <>
+                      <div id={turnstileContainerId} className="about-turnstile" />
+                      {!isTurnstileReady ? (
+                        <p className="about-form-status">Loading spam protection...</p>
+                      ) : null}
+                    </>
+                  ) : (
+                    <p className="about-form-status about-form-status-error">
+                      Add `VITE_TURNSTILE_SITE_KEY` to enable the contact form.
+                    </p>
+                  )}
+                </div>
+
                 <div className="about-form-actions">
-                  <Button type="submit" className="about-submit-button" disabled={status === 'submitting'}>
+                  <Button
+                    type="submit"
+                    className="about-submit-button"
+                    disabled={status === 'submitting' || (!turnstileSiteKey && !bypassTurnstile)}
+                  >
                     {status === 'submitting' ? 'Sending...' : 'Send Message'}
                   </Button>
                   {status === 'success' ? (
@@ -214,8 +354,7 @@ function AboutPage() {
                   ) : null}
                   {status === 'error' ? (
                     <p className="about-form-status about-form-status-error">
-                      FormSubmit may still need its first-time activation email confirmed for
-                      `brandonlienaudio@gmail.com`.
+                      {errorMessage}
                     </p>
                   ) : null}
                 </div>

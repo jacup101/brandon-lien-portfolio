@@ -61,18 +61,18 @@
   aspect-ratio: 16 / 9;
 }
 
-.pp-reels-video {
+.pp-reels-embed {
   position: relative;
   width: 100%;
   height: 100%;
   display: block;
-  object-fit: cover;
+  border: 0;
   opacity: 0;
   transition: opacity 220ms ease;
   background: #000000;
 }
 
-.pp-reels-video-loaded {
+.pp-reels-embed-loaded {
   opacity: 1;
 }
 

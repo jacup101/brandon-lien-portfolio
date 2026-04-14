@@ -202,6 +202,14 @@
   margin-top: 1.5rem;
 }
 
+.about-captcha-block {
+  margin-top: 1.25rem;
+}
+
+.about-turnstile {
+  min-height: 65px;
+}
+
 .about-submit-button {
   min-width: 180px;
   border: 1px solid var(--site-accent);

@@ -4,7 +4,6 @@ import PostProductionGallery from '../components/postProduction/PostProductionGa
 
 const FilmsPage = () => {
   const [reelLoaded, setReelLoaded] = useState(false);
-  const [reelError, setReelError] = useState(false);
 
   return (
     <main className="landing-page">
@@ -32,26 +31,25 @@ const FilmsPage = () => {
           <section id="reels" className="pp-page-section pp-reels-section" aria-label="Reels">
             <div className="pp-section-divider" aria-hidden="true" />
             <div className="pp-reels-frame">
-              {!reelLoaded && !reelError ? (
+              {!reelLoaded ? (
                 <div className="pp-media-skeleton" aria-hidden="true" />
               ) : null}
-              <video
-                className={`pp-reels-video ${reelLoaded || reelError ? 'pp-reels-video-loaded' : ''}`}
-                controls
-                preload="auto"
-                playsInline
-                onLoadedMetadata={() => setReelLoaded(true)}
-                onCanPlay={() => setReelLoaded(true)}
-                onError={() => setReelError(true)}
-              >
-                <source src="/assets/2024-sound-reel-web.mp4" type="video/mp4" />
-              </video>
+              <iframe
+                className={`pp-reels-embed ${reelLoaded ? 'pp-reels-embed-loaded' : ''}`}
+                src="https://www.youtube.com/embed/GX-h4We5vtw?rel=0"
+                title="Post-production sound reel"
+                loading="lazy"
+                allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
+                referrerPolicy="strict-origin-when-cross-origin"
+                allowFullScreen
+                onLoad={() => setReelLoaded(true)}
+              />
             </div>
           </section>
         </Container>
       </section>
     </main>
-  )
+  );
 };
 
 export default FilmsPage;
