@@ -36,7 +36,7 @@ const FilmsPage = () => {
               ) : null}
               <iframe
                 className={`pp-reels-embed ${reelLoaded ? 'pp-reels-embed-loaded' : ''}`}
-                src="https://www.youtube.com/embed/GX-h4We5vtw?rel=0"
+                src="https://www.youtube.com/embed/GX-h4We5vtw?rel=0&modestbranding=1&playsinline=1"
                 title="Post-production sound reel"
                 loading="lazy"
                 allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"

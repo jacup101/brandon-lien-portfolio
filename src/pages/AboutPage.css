@@ -6,14 +6,16 @@
 
 .about-hero {
   display: grid;
-  grid-template-columns: minmax(280px, 0.9fr) minmax(0, 1.1fr);
+  grid-template-columns: minmax(0, 1.12fr) minmax(280px, 0.88fr);
   gap: 2.5rem;
-  align-items: center;
+  align-items: start;
   padding: 1.5rem 0 2.25rem;
 }
 
 .about-hero-media {
   min-width: 0;
+  display: grid;
+  gap: 1rem;
 }
 
 .about-portrait-frame {
@@ -43,36 +45,14 @@
 }
 
 .about-hero-copy {
-  max-width: 40rem;
-}
-
-.about-kicker {
-  margin: 0 0 0.8rem;
-  color: var(--site-faint);
-  font-size: 0.76rem;
-  letter-spacing: 0.18em;
-  text-transform: uppercase;
-}
-
-.about-title {
-  margin: 0;
-  font-size: clamp(3.1rem, 8vw, 6.5rem);
-  line-height: 0.94;
-  letter-spacing: -0.05em;
-}
-
-.about-lead {
-  margin: 1.2rem 0 0;
-  color: var(--site-muted);
-  font-size: clamp(1.05rem, 2vw, 1.28rem);
-  line-height: 1.8;
+  min-width: 0;
 }
 
 .about-link-row {
   display: flex;
   flex-wrap: wrap;
   gap: 0.8rem;
-  margin-top: 1.5rem;
+  justify-content: center;
 }
 
 .about-link-icon {
@@ -100,8 +80,8 @@
 }
 
 .about-link-icon-imdb {
-  background-image: url('/assets/imdb-icon.webp');
-  background-size: 30px 30px;
+  background-image: url('/assets/IMDb_PrimaryLogo_White.png');
+  background-size: 42px auto;
 }
 
 .about-image-strip {
@@ -138,15 +118,15 @@
   max-width: 50rem;
 }
 
+.about-copy-grid-hero {
+  max-width: none;
+}
+
 .about-copy-grid p {
   margin: 0;
   color: var(--site-muted);
   font-size: 1.02rem;
   line-height: 1.95;
-}
-
-.about-copy-closing {
-  color: var(--site-text) !important;
 }
 
 .about-contact-section {

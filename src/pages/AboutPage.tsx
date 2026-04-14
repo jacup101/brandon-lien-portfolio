@@ -161,6 +161,47 @@ function AboutPage() {
     <main className="about-page">
       <Container>
         <section className="about-hero">
+          <div className="about-hero-copy">
+            <div className="about-copy-grid about-copy-grid-hero">
+              <p>
+                My name is Brandon Lien, and I&apos;m a Vietnamese and Teochew American
+                artist from Los Angeles, CA. My personal philosophy is to stay adaptable
+                and be willing to learn from any discipline. All of my interests,
+                experiences, and work are a part of who I am professionally and
+                artistically.
+              </p>
+
+              <p>
+                I am a sound artist with a wide array of experience, from sound design,
+                mixing in stereo and surround, dialogue editing, sound effects editing,
+                foley, field recording, and file delivery. I take pride in being a trusted
+                collaborator that can ideate creative and technical solutions to challenges.
+              </p>
+
+              <p>
+                I graduated from California State University Northridge in 2022 with a
+                Bachelor of Arts in Film Production and started my career in post
+                production sound with internships at Formosa Group and Enhanced Media.
+                Since then, my work has screened at numerous film festivals, theaters, and
+                streaming services like Amazon Prime, Lifetime, and Tubi.
+              </p>
+
+              <p>
+                In other areas of filmmaking, I have experience doing video editing,
+                directing, and cinematography. I have worked with the Tom &amp; Ethel
+                Bradley Center, Museum of Social Justice, and Guitar Foundation of America
+                on projects. As a musician, I have released two albums (with one more on
+                the way) and have worked on multiple collaborations.
+              </p>
+
+              <p>
+                This website serves as a portfolio, a journal, a love letter, and a
+                representation of the multitudes of things that make up who I am. Thanks
+                for visiting.
+              </p>
+            </div>
+          </div>
+
           <div className="about-hero-media">
             <div className="about-portrait-frame">
               <img
@@ -172,15 +213,6 @@ function AboutPage() {
                 fetchPriority="high"
               />
             </div>
-          </div>
-
-          <div className="about-hero-copy">
-            <p className="about-kicker">About Me</p>
-            <h1 className="about-title">Brandon Lien</h1>
-            <p className="about-lead">
-              Vietnamese and Teochew American artist from Los Angeles working across
-              post-production sound, filmmaking, and music.
-            </p>
 
             <div className="about-link-row" aria-label="External links">
               <a
@@ -203,47 +235,6 @@ function AboutPage() {
 
         <Row className="justify-content-center">
           <Col xl={10}>
-            <section className="about-section about-copy-section">
-              <div className="about-copy-grid">
-                <p>
-                  My name is Brandon Lien, and I&apos;m a Vietnamese and Teochew American
-                  artist from Los Angeles, CA. My personal philosophy is to stay adaptable
-                  and be willing to learn from any discipline. All of my interests,
-                  experiences, and work are a part of who I am professionally and
-                  artistically.
-                </p>
-
-                <p>
-                  I am a sound artist with a wide array of experience, from sound design,
-                  mixing in stereo and surround, dialogue editing, sound effects editing,
-                  foley, field recording, and file delivery. I take pride in being a trusted
-                  collaborator that can ideate creative and technical solutions to challenges.
-                </p>
-
-                <p>
-                  I graduated from California State University Northridge in 2022 with a
-                  Bachelor of Arts in Film Production and started my career in post
-                  production sound with internships at Formosa Group and Enhanced Media.
-                  Since then, my work has screened at numerous film festivals, theaters, and
-                  streaming services like Amazon Prime, Lifetime, and Tubi.
-                </p>
-
-                <p>
-                  In other areas of filmmaking, I have experience doing video editing,
-                  directing, and cinematography. I have worked with the Tom &amp; Ethel
-                  Bradley Center, Museum of Social Justice, and Guitar Foundation of America
-                  on projects. As a musician, I have released two albums (with one more on
-                  the way) and have worked on multiple collaborations.
-                </p>
-
-                <p className="about-copy-closing">
-                  This website serves as a portfolio, a journal, a love letter, and a
-                  representation of the multitudes of things that make up who I am. Thanks
-                  for visiting.
-                </p>
-              </div>
-            </section>
-
             <section className="about-image-strip about-section" aria-label="Additional portraits">
               <div className="about-strip-image-frame">
                 <img
@@ -276,8 +267,7 @@ function AboutPage() {
 
             <section className="about-section about-contact-section">
               <div className="about-contact-header">
-                <p className="about-kicker">Contact</p>
-                <h2 className="about-subtitle">Get In Touch</h2>
+                <h2 className="about-subtitle">Contact Me</h2>
               </div>
 
               <Form className="about-form" onSubmit={handleSubmit}>
