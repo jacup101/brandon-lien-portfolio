@@ -1,88 +1,107 @@
-# React + TypeScript + Vite
+# Brandon Lien Portfolio
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+Personal portfolio site for Brandon Lien, built with React, TypeScript, Vite, and Cloudflare Pages.
 
-Currently, two official plugins are available:
+The site currently centers on three public sections:
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react/README.md) uses [Babel](https://babeljs.io/) for Fast Refresh
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react-swc) uses [SWC](https://swc.rs/) for Fast Refresh
+- `/`: landing page with the reel hero
+- `/post-sound`: post-production sound page with gallery work and reel
+- `/about`: artist bio, links, and contact form
 
-## Expanding the ESLint configuration
+There is also a legacy `/films` route that currently points to the same content as `/post-sound`.
 
-If you are developing a production application, we recommend updating the configuration to enable type aware lint rules:
+## Stack
 
-- Configure the top-level `parserOptions` property like this:
+- React 18
+- TypeScript
+- Vite
+- React Router
+- React Bootstrap
+- Cloudflare Pages Functions
+- Cloudflare Turnstile
+- Resend
 
-```js
-export default tseslint.config({
-  languageOptions: {
-    // other options...
-    parserOptions: {
-      project: ['./tsconfig.node.json', './tsconfig.app.json'],
-      tsconfigRootDir: import.meta.dirname,
-    },
-  },
-})
+## Project Structure
+
+- `src/App.tsx`: app shell and route definitions
+- `src/pages/LandingPage.tsx`: homepage reel/intro
+- `src/pages/FilmsPage.tsx`: post-sound page
+- `src/pages/AboutPage.tsx`: bio, external links, and contact form
+- `src/components/postProduction/PostProductionGallery.tsx`: post-sound gallery cards
+- `src/data/postProductionWork.ts`: post-sound project data
+- `functions/api/contact.ts`: Cloudflare Pages Function for the contact form
+- `public/assets/`: site images, videos, and fonts
+
+## Development
+
+Install dependencies:
+
+```bash
+npm install
 ```
 
-- Replace `tseslint.configs.recommended` to `tseslint.configs.recommendedTypeChecked` or `tseslint.configs.strictTypeChecked`
-- Optionally add `...tseslint.configs.stylisticTypeChecked`
-- Install [eslint-plugin-react](https://github.com/jsx-eslint/eslint-plugin-react) and update the config:
+Run the frontend only:
 
-```js
-// eslint.config.js
-import react from 'eslint-plugin-react'
-
-export default tseslint.config({
-  // Set the react version
-  settings: { react: { version: '18.3' } },
-  plugins: {
-    // Add the react plugin
-    react,
-  },
-  rules: {
-    // other rules...
-    // Enable its recommended rules
-    ...react.configs.recommended.rules,
-    ...react.configs['jsx-runtime'].rules,
-  },
-})
+```bash
+npm run dev
 ```
 
-## Contact Form Setup
+Run a production build:
 
-This project uses a Cloudflare Pages Function at `functions/api/contact.ts` for the contact form.
+```bash
+npm run build
+```
 
-Development commands:
+Run the site locally with Cloudflare Pages Functions enabled:
 
-- `npm run dev`: Vite-only frontend development
-- `npm run dev:pages`: full local Cloudflare Pages run with the contact form function and `.dev.vars` secrets
+```bash
+npm run dev:pages
+```
 
-The `dev:pages` command uses a temporary Wrangler persistence directory in `/tmp/brandon-site-wrangler-state` to avoid the local SQLite lock issue we hit with Wrangler's default `.wrangler/state` folder.
+The Pages dev server runs against the built frontend and uses a temporary Wrangler persistence directory at `/tmp/brandon-site-wrangler-state`.
 
-Required environment values:
+## Environment Variables
 
-- `VITE_TURNSTILE_SITE_KEY`: public Turnstile site key used by the React form
-- `VITE_BYPASS_TURNSTILE`: optional local-only frontend flag to hide the widget during local testing
-- `TURNSTILE_SECRET_KEY`: secret key used by the Pages Function to verify captchas
-- `BYPASS_TURNSTILE`: optional local-only Pages Function flag to skip captcha verification during local testing
-- `RESEND_API_KEY`: Resend API key used to send email
+### Frontend
+
+Set these in `.env.local`:
+
+- `VITE_TURNSTILE_SITE_KEY`: public Cloudflare Turnstile site key
+- `VITE_BYPASS_TURNSTILE`: optional local-only flag for bypassing the widget during development
+
+### Local Pages Function Secrets
+
+Set these in `.dev.vars` for local `npm run dev:pages` testing:
+
+- `TURNSTILE_SECRET_KEY`: secret key used to verify captcha submissions
+- `BYPASS_TURNSTILE`: optional local-only flag to skip captcha verification
+- `RESEND_API_KEY`: Resend API key
 - `RESEND_FROM_EMAIL`: verified sender address in Resend
-- `CONTACT_TO_EMAIL`: inbox that should receive portfolio messages
+- `CONTACT_TO_EMAIL`: inbox that receives portfolio messages
 
-Local development files:
+## Contact Form
 
-- Copy `.env.local.example` to `.env.local` for the public Turnstile site key
-- Copy `.dev.vars.example` to `.dev.vars` for local Pages Function secrets
+The About page posts to `/api/contact`, which is handled by `functions/api/contact.ts`.
 
-Testing locally:
+Current behavior:
 
-- Use `npm run dev` when you are only working on layout, content, or styling
-- Use `npm run dev:pages` when you need to test Turnstile, the `/api/contact` Pages Function, or Resend delivery
-- The full local Pages server is available at `http://localhost:8788` when `npm run dev:pages` is running
-- Set `VITE_BYPASS_TURNSTILE=true` in `.env.local` and `BYPASS_TURNSTILE=true` in `.dev.vars` to bypass captcha locally while keeping it enabled in production
+- validates name, email, subject, and message
+- verifies Turnstile unless bypass is enabled
+- sends the message through Resend
+- returns a user-facing error when configuration is missing or email delivery fails
 
-Production on Cloudflare Pages:
+For full local end-to-end contact form testing, use `npm run dev:pages` instead of plain `npm run dev`.
 
-- Add `VITE_TURNSTILE_SITE_KEY` as an environment variable in the Pages project settings
-- Add the other values as secrets in the Pages project settings
+## Deployment
+
+The site is intended for Cloudflare Pages.
+
+Production setup needs:
+
+- `VITE_TURNSTILE_SITE_KEY` as a Pages environment variable
+- `TURNSTILE_SECRET_KEY`
+- `RESEND_API_KEY`
+- `RESEND_FROM_EMAIL`
+- `CONTACT_TO_EMAIL`
+
+If you only need to work on layout or styling, the plain Vite dev server is usually enough. If you need to test the contact form, Turnstile, or the Pages Function, use the Pages dev workflow.
