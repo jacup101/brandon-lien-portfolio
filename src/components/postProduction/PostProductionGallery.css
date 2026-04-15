@@ -17,14 +17,14 @@
   display: inline-flex;
   align-items: center;
   justify-content: center;
-  min-width: 96px;
-  padding: 0.3rem 0.15rem;
+  min-width: 118px;
+  padding: 0.45rem 0.35rem;
   border: 0;
   background: transparent;
   font-family: var(--site-font-display);
   color: var(--site-muted);
-  font-size: 0.84rem;
-  letter-spacing: 0.12em;
+  font-size: 0.96rem;
+  letter-spacing: 0.14em;
   text-decoration: none;
   text-transform: uppercase;
   transition: color 180ms ease, transform 180ms ease;
