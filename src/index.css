@@ -1,3 +1,11 @@
+@font-face {
+  font-family: "F37 Bergman";
+  src: url("/assets/f37-bergman.ttf") format("truetype");
+  font-weight: 300;
+  font-style: normal;
+  font-display: swap;
+}
+
 .site-navbar {
   background: rgba(11, 11, 11, 0.82);
   border-bottom: 1px solid rgba(255, 255, 255, 0.08);
@@ -34,12 +42,22 @@
   border-radius: 0 !important;
 }
 
+.site-navbar-toggle .navbar-toggler-icon {
+  background-image: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 30 30'%3e%3cpath stroke='rgba(255,255,255,1)' stroke-linecap='round' stroke-miterlimit='10' stroke-width='2.25' d='M4 7h22M4 15h22M4 23h22'/%3e%3c/svg%3e") !important;
+}
+
+.site-navbar-toggle:focus {
+  box-shadow: 0 0 0 0.2rem rgba(255, 255, 255, 0.16) !important;
+}
+
 :root {
+  --site-font-display: "F37 Bergman", "Avenir Next", "Segoe UI", Helvetica, Arial, sans-serif;
+  --site-font-body: "Avenir Next", "Segoe UI", Helvetica, Arial, sans-serif;
   --site-bg: #0b0b0b;
   --site-bg-elevated: #121212;
   --site-bg-soft: #171717;
   --site-text: #f3efe8;
-  --site-muted: rgba(243, 239, 232, 0.68);
+  --site-muted: rgba(243, 239, 232, 0.78);
   --site-faint: rgba(243, 239, 232, 0.42);
   --site-border: rgba(255, 255, 255, 0.1);
   --site-accent: #c9a46a;
@@ -49,7 +67,7 @@
 
 .app-root {
   min-height: 100vh;
-  font-family: "Avenir Next", "Segoe UI", Helvetica, Arial, sans-serif;
+  font-family: var(--site-font-body);
   line-height: 1.5;
   font-weight: 400;
   color: var(--site-text);
@@ -67,6 +85,7 @@ html,
 body {
   margin: 0;
   background: var(--site-bg);
+  font-family: var(--site-font-body);
 }
 
 #root {
@@ -78,4 +97,26 @@ body {
 
 a {
   color: inherit;
+}
+
+h1,
+h2,
+h3,
+h4,
+h5,
+h6,
+.site-navbar-brand,
+.landing-intro-line,
+.about-subtitle,
+.pp-gallery-title,
+.film-card-title,
+.film-card-title-carousel {
+  font-family: var(--site-font-display);
+}
+
+button,
+input,
+select,
+textarea {
+  font: inherit;
 }

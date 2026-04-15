@@ -173,25 +173,23 @@ function AboutPage() {
 
               <p>
                 I am a sound artist with a wide array of experience, from sound design,
-                mixing in stereo and surround, dialogue editing, sound effects editing,
-                foley, field recording, and file delivery. I take pride in being a trusted
-                collaborator that can ideate creative and technical solutions to challenges.
+                mixing in stereo and 5.1 surround, dialogue editing, sound effects
+                editing, foley, field recording, audio restoration, and file delivery. I
+                take pride in being a trusted collaborator that can ideate creative and
+                technical solutions to challenges.
               </p>
 
               <p>
-                I graduated from California State University Northridge in 2022 with a
-                Bachelor of Arts in Film Production and started my career in post
-                production sound with internships at Formosa Group and Enhanced Media.
-                Since then, my work has screened at numerous film festivals, theaters, and
-                streaming services like Amazon Prime, Lifetime, and Tubi.
+                I started my career in post-production sound with internships at Formosa
+                Group and Enhanced Media. Since then, my work has screened at numerous
+                film festivals, theaters, and streaming services like Amazon Prime,
+                Lifetime, and Tubi.
               </p>
 
               <p>
                 In other areas of filmmaking, I have experience doing video editing,
-                directing, and cinematography. I have worked with the Tom &amp; Ethel
-                Bradley Center, Museum of Social Justice, and Guitar Foundation of America
-                on projects. As a musician, I have released two albums (with one more on
-                the way) and have worked on multiple collaborations.
+                directing, and cinematography. As a musician, I have released two albums
+                (with one more on the way) and have worked on multiple collaborations.
               </p>
 
               <p>

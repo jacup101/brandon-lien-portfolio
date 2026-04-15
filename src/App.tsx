@@ -11,7 +11,7 @@ import NavBarComponent from './components/util/NavBarComponent';
 function AppShell() {
   const navLinks = [
     { path: "/", label: "Home" },
-    { path: "/post-production-sound", label: "Post-Production Sound" },
+    { path: "/post-production-sound", label: "Post Sound" },
     { path: "/about", label: "About" },
   ];
 

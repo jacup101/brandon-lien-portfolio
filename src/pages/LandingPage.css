@@ -42,7 +42,7 @@
 
 .landing-reel-section {
   max-width: 820px;
-  margin: 4.25rem auto 0;
+  margin: 1.5rem auto 0;
 }
 
 .landing-reel-frame {
@@ -50,7 +50,7 @@
   overflow: hidden;
   background: var(--site-bg-soft);
   border: 1px solid var(--site-border);
-  aspect-ratio: 16 / 9;
+  aspect-ratio: 4 / 3;
   box-shadow: 0 18px 40px rgba(0, 0, 0, 0.22);
 }
 
@@ -85,6 +85,6 @@
   }
 
   .landing-reel-section {
-    margin-top: 3.25rem;
+    margin-top: 1.25rem;
   }
 }

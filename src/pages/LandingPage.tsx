@@ -23,17 +23,17 @@ function LandingPage() {
                 className={`landing-reel-video ${
                   reelLoaded || reelError ? 'landing-reel-video-loaded' : ''
                 }`}
-                controls
                 autoPlay
                 muted
                 loop
                 preload="auto"
                 playsInline
+                disablePictureInPicture
                 onLoadedMetadata={() => setReelLoaded(true)}
                 onCanPlay={() => setReelLoaded(true)}
                 onError={() => setReelError(true)}
               >
-                <source src="/assets/loop-web.mp4" type="video/mp4" />
+                <source src="/assets/loop-web-silent.mp4" type="video/mp4" />
               </video>
             </div>
           </section>

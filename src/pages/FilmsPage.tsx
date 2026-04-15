@@ -11,7 +11,6 @@ const FilmsPage = () => {
         <Container>
           <div className="pp-page-header">
             <div className="pp-page-nav" role="navigation" aria-label="Post-production sections">
-              <a className="pp-page-nav-link" href="#gallery">Work</a>
               <a className="pp-page-nav-link" href="#reels">Reel</a>
               <a
                 className="pp-page-nav-link"
@@ -36,7 +35,7 @@ const FilmsPage = () => {
               ) : null}
               <iframe
                 className={`pp-reels-embed ${reelLoaded ? 'pp-reels-embed-loaded' : ''}`}
-                src="https://www.youtube.com/embed/GX-h4We5vtw?rel=0&modestbranding=1&playsinline=1"
+                src="https://www.youtube.com/embed/EEbANoFEptc?rel=0&modestbranding=1&playsinline=1"
                 title="Post-production sound reel"
                 loading="lazy"
                 allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
