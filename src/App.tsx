@@ -1,6 +1,5 @@
 import 'bootstrap/dist/css/bootstrap.css';
 import { BrowserRouter as Router, Route, Routes } from 'react-router-dom';
-import HomePage from './pages/HomePage';
 import AboutPage from './pages/AboutPage';
 import FilmsPage from './pages/FilmsPage';
 import LandingPage from './pages/LandingPage';
@@ -23,7 +22,6 @@ function AppShell() {
           <Route path="/" element={<LandingPage />} />
           <Route path="/post-sound" element={<FilmsPage />} />
           <Route path="/about" element={<AboutPage />} />
-          <Route path="/archive" element={<HomePage />} />
           <Route path="/films" element={<FilmsPage />} />
         </Routes>
       </div>
