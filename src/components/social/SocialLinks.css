@@ -1,0 +1,44 @@
+.social-link-row {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.25rem;
+  justify-content: center;
+}
+
+.social-link-icon {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 40px;
+  height: 40px;
+  border: 0;
+  background: transparent;
+  text-decoration: none;
+  transition: opacity 180ms ease;
+  background-position: center;
+  background-repeat: no-repeat;
+  background-size: 22px 22px;
+  opacity: 0.62;
+}
+
+.social-link-icon:hover,
+.social-link-icon:focus-visible {
+  opacity: 0.75;
+}
+
+.social-link-icon-instagram {
+  background-image: url('/assets/instagram-icon.webp');
+}
+
+.social-link-icon-imdb {
+  background-image: url('/assets/IMDb_PrimaryLogo_White.png');
+  background-size: 42px auto;
+}
+
+.social-link-icon-youtube {
+  background-image: url('/assets/youtube-app-white-icon.webp');
+}
+
+.social-link-icon-bandcamp {
+  background-image: url('/assets/bandcamp.png');
+}

@@ -2,8 +2,15 @@ import { useState } from 'react';
 import { Container } from 'react-bootstrap';
 import PostProductionGallery from '../components/postProduction/PostProductionGallery';
 
+const REEL_BASE = 'https://www.youtube.com/embed/656A-WOA-lk?rel=0&modestbranding=1&playsinline=1';
+
 const FilmsPage = () => {
   const [reelLoaded, setReelLoaded] = useState(false);
+  const [reelSrc, setReelSrc] = useState(REEL_BASE);
+
+  const handleReelClick = () => {
+    setReelSrc(`${REEL_BASE}&autoplay=1`);
+  };
 
   return (
     <main className="landing-page">
@@ -11,7 +18,7 @@ const FilmsPage = () => {
         <Container>
           <div className="pp-page-header">
             <div className="pp-page-nav" role="navigation" aria-label="Post-production sections">
-              <a className="pp-page-nav-link" href="#reels">Reel</a>
+              <a className="pp-page-nav-link" href="#reels" onClick={handleReelClick}>Reel</a>
               <a
                 className="pp-page-nav-link"
                 href="https://www.imdb.com/name/nm11744121"
@@ -35,7 +42,7 @@ const FilmsPage = () => {
               ) : null}
               <iframe
                 className={`pp-reels-embed ${reelLoaded ? 'pp-reels-embed-loaded' : ''}`}
-                src="https://www.youtube.com/embed/EEbANoFEptc?rel=0&modestbranding=1&playsinline=1"
+                src={reelSrc}
                 title="Post-production sound reel"
                 loading="lazy"
                 allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"

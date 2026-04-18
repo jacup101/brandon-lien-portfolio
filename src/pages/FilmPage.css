@@ -1,0 +1,150 @@
+.film-list-page {
+  color: var(--site-text);
+}
+
+.film-list-section {
+  padding: 1.5rem 0 4rem;
+}
+
+.film-list {
+  max-width: 960px;
+  margin: 0 auto;
+  display: flex;
+  flex-direction: column;
+  gap: 0;
+}
+
+.film-list-row {
+  display: flex;
+  gap: 2rem;
+  align-items: flex-start;
+  padding: 2rem 0;
+  border-bottom: 1px solid var(--site-border);
+  text-decoration: none;
+  color: inherit;
+  transition: opacity 180ms ease;
+}
+
+.film-list-row:first-child {
+  border-top: 1px solid var(--site-border);
+}
+
+.film-list-row:hover,
+.film-list-row:focus-visible {
+  opacity: 0.72;
+}
+
+.film-list-thumb {
+  flex-shrink: 0;
+  width: 220px;
+  aspect-ratio: 2 / 3;
+  overflow: hidden;
+  background: var(--site-bg-elevated);
+  border: 1px solid var(--site-border);
+}
+
+.film-list-thumb img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display: block;
+}
+
+.film-list-thumb img.img-contain {
+  object-fit: contain;
+}
+
+.film-list-thumb--contain {
+  background: transparent;
+  border-color: transparent;
+  aspect-ratio: unset;
+  width: 220px;
+  height: 330px;
+}
+
+.film-list-thumb--contain img {
+  width: 100%;
+  height: auto;
+  object-fit: unset;
+}
+
+.film-list-copy {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+  padding-top: 0.25rem;
+}
+
+.film-list-title {
+  margin: 0;
+  font-size: clamp(1.5rem, 3vw, 2.2rem);
+  font-weight: 300;
+  letter-spacing: 0.04em;
+  line-height: 1.25;
+  font-family: var(--site-font-body);
+}
+
+.film-list-meta {
+  margin: 0;
+  font-size: 1rem;
+  color: var(--site-muted);
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+}
+
+.film-list-blurb {
+  margin: 0.25rem 0 0;
+  font-size: 1rem;
+  color: var(--site-text);
+  line-height: 1.6;
+}
+
+.film-card-grid {
+  max-width: 960px;
+  margin: 2.5rem auto 0;
+  display: flex;
+  flex-direction: row;
+}
+
+.film-card {
+  flex: 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+  padding: 2.5rem 1rem;
+  border-right: 1px solid var(--site-border);
+  text-decoration: none;
+  color: inherit;
+  transition: opacity 180ms ease;
+}
+
+.film-card:last-child {
+  border-right: none;
+}
+
+.film-card:hover,
+.film-card:focus-visible {
+  opacity: 0.72;
+}
+
+.film-card-title {
+  margin: 0;
+  font-size: clamp(1rem, 1.8vw, 1.3rem);
+  font-weight: 300;
+  letter-spacing: 0.04em;
+  line-height: 1.35;
+  font-family: var(--site-font-body);
+}
+
+@media (max-width: 575px) {
+  .film-list-thumb {
+    width: 140px;
+  }
+
+  .film-list-row {
+    gap: 1.25rem;
+    padding: 1.5rem 0;
+  }
+
+}

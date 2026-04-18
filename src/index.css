@@ -3,7 +3,7 @@
   src: url("/assets/f37-bergman.ttf") format("truetype");
   font-weight: 300;
   font-style: normal;
-  font-display: swap;
+  font-display: optional;
 }
 
 .site-navbar {
@@ -14,10 +14,11 @@
 
 .site-navbar-brand {
   color: var(--site-text) !important;
-  font-size: 0.96rem;
+  font-size: 1.1rem;
   font-weight: 600;
   letter-spacing: 0.08em;
   text-transform: uppercase;
+  -webkit-text-stroke: 0.4px var(--site-text);
 }
 
 .site-navbar-links {
@@ -27,6 +28,7 @@
 .site-navbar-link {
   color: var(--site-muted) !important;
   font-size: 0.82rem;
+  -webkit-text-stroke: 0.4px currentColor;
   letter-spacing: 0.12em;
   text-transform: uppercase;
 }

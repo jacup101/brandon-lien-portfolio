@@ -1,5 +1,6 @@
 import { FormEvent, useEffect, useId, useRef, useState } from 'react';
 import { Button, Col, Container, Form, Row } from 'react-bootstrap';
+import SocialLinks from '../components/social/SocialLinks';
 import './AboutPage.css';
 
 type FormStatus = 'idle' | 'submitting' | 'success' | 'error';
@@ -212,22 +213,12 @@ function AboutPage() {
               />
             </div>
 
-            <div className="about-link-row" aria-label="External links">
-              <a
-                className="about-link-icon about-link-icon-instagram"
-                href="https://www.instagram.com/brandonlien_/"
-                target="_blank"
-                rel="noreferrer"
-                aria-label="Instagram"
-              />
-              <a
-                className="about-link-icon about-link-icon-imdb"
-                href="https://www.imdb.com/name/nm11744121"
-                target="_blank"
-                rel="noreferrer"
-                aria-label="IMDb"
-              />
-            </div>
+            <SocialLinks links={[
+              { href: 'https://www.instagram.com/brandonlien_/', ariaLabel: 'Instagram', iconClass: 'social-link-icon-instagram' },
+              { href: 'https://www.imdb.com/name/nm11744121', ariaLabel: 'IMDb', iconClass: 'social-link-icon-imdb' },
+              { href: 'https://www.youtube.com/channel/UCNZ_oSPzSEylE4HNqm6EoHg', ariaLabel: 'YouTube', iconClass: 'social-link-icon-youtube' },
+              { href: 'https://brandonlien.bandcamp.com/', ariaLabel: 'Bandcamp', iconClass: 'social-link-icon-bandcamp' },
+            ]} />
           </div>
         </section>
 

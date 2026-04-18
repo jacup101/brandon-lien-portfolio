@@ -23,7 +23,7 @@ const NavBarComponent: React.FC<NavbarProps> = ({ brand, links }) => {
         className="site-navbar"
         expanded={expanded}
       >
-        <Container fluid="lg">
+        <Container fluid="xl">
           <LinkContainer to="/" onClick={() => setExpanded(false)}>
             <Navbar.Brand className="site-navbar-brand">{brand}</Navbar.Brand>
           </LinkContainer>

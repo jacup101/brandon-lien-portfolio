@@ -1,5 +1,6 @@
 import { useState } from 'react';
 import { Container } from 'react-bootstrap';
+import SocialLinks from '../components/social/SocialLinks';
 import './LandingPage.css';
 
 function LandingPage() {
@@ -10,10 +11,6 @@ function LandingPage() {
     <main className="landing-page">
       <section className="landing-section">
         <Container>
-          <div className="landing-intro">
-            <p className="landing-intro-line">Filmmaker | Musician | Artist</p>
-          </div>
-
           <section className="landing-reel-section" aria-label="Film reel">
             <div className="landing-reel-frame">
               {!reelLoaded && !reelError ? (
@@ -37,6 +34,13 @@ function LandingPage() {
               </video>
             </div>
           </section>
+
+          <SocialLinks links={[
+            { href: 'https://www.instagram.com/brandonlien_/', ariaLabel: 'Instagram', iconClass: 'social-link-icon-instagram' },
+            { href: 'https://www.imdb.com/name/nm11744121', ariaLabel: 'IMDb', iconClass: 'social-link-icon-imdb' },
+            { href: 'https://www.youtube.com/channel/UCNZ_oSPzSEylE4HNqm6EoHg', ariaLabel: 'YouTube', iconClass: 'social-link-icon-youtube' },
+            { href: 'https://brandonlien.bandcamp.com/', ariaLabel: 'Bandcamp', iconClass: 'social-link-icon-bandcamp' },
+          ]} />
         </Container>
       </section>
     </main>

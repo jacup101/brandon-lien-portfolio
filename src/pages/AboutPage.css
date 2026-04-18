@@ -48,41 +48,7 @@
   min-width: 0;
 }
 
-.about-link-row {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 0.8rem;
-  justify-content: center;
-}
 
-.about-link-icon {
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  width: 56px;
-  height: 56px;
-  border: 0;
-  background: transparent;
-  text-decoration: none;
-  transition: opacity 180ms ease;
-  background-position: center;
-  background-repeat: no-repeat;
-  background-size: 26px 26px;
-}
-
-.about-link-icon:hover,
-.about-link-icon:focus-visible {
-  opacity: 0.78;
-}
-
-.about-link-icon-instagram {
-  background-image: url('/assets/instagram-icon.webp');
-}
-
-.about-link-icon-imdb {
-  background-image: url('/assets/IMDb_PrimaryLogo_White.png');
-  background-size: 42px auto;
-}
 
 .about-image-strip {
   display: grid;
