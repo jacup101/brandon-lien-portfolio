@@ -28,6 +28,7 @@
   text-decoration: none;
   text-transform: uppercase;
   transition: color 180ms ease, transform 180ms ease;
+  -webkit-text-stroke: 0.4px currentColor;
 }
 
 .pp-page-nav-link:hover,

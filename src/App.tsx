@@ -1,5 +1,12 @@
 import 'bootstrap/dist/css/bootstrap.css';
-import { BrowserRouter as Router, Route, Routes } from 'react-router-dom';
+import { BrowserRouter as Router, Route, Routes, useLocation } from 'react-router-dom';
+import { useEffect } from 'react';
+
+function ScrollToTop() {
+  const { pathname } = useLocation();
+  useEffect(() => { window.scrollTo(0, 0); }, [pathname]);
+  return null;
+}
 import AboutPage from './pages/AboutPage';
 import FilmDetailPage from './pages/FilmDetailPage';
 import FilmPage from './pages/FilmPage';
@@ -18,6 +25,7 @@ function AppShell() {
 
   return (
     <div className='app-root'>
+      <ScrollToTop />
       <NavBarComponent brand="Brandon Lien" links={navLinks} />
       <div className='page-content-padding'>
         <Routes>
