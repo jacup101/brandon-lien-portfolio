@@ -29,6 +29,7 @@ export interface FilmItem {
   gallery?: GalleryItem[];
   galleryColumns?: number;
   heroImg?: string;
+  imdbUrl?: string;
 }
 
 export const FILM_WORK: FilmItem[] = [
@@ -52,6 +53,7 @@ export const FILM_WORK: FilmItem[] = [
     imgPath: '/assets/film/web/shades-of-trish.jpg',
     description: 'Created for California State University Northridge Vietnamese Student Association\'s Vietnamese Culture Night. This documentary is about Trish Thuy Trang, a Vietnamese American singer, entrepreneur, mother, and artist.',
     videoUrl: 'https://www.youtube.com/embed/cQIKE_zjR0U',
+    imdbUrl: 'https://www.imdb.com/title/tt14682884/?ref_=nm_knf_c_1',
     credits: [
       { role: 'Directed and Produced by', names: 'Brandon Lien' },
       { role: 'Executive Producers', names: 'Tommy Trang & Tinn Ou' },

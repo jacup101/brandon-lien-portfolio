@@ -1,6 +1,8 @@
+import { useEffect } from 'react';
 import { Container } from 'react-bootstrap';
 import { Link, useParams } from 'react-router-dom';
 import { MUSIC_PROJECT_GROUPS } from '../data/musicProjects';
+import MusicPhotoCarousel from '../components/music/MusicPhotoCarousel';
 import './MusicDetailPage.css';
 
 const MUSIC_PROJECTS = MUSIC_PROJECT_GROUPS.flatMap((group) => group.projects);
@@ -8,6 +10,10 @@ const MUSIC_PROJECTS = MUSIC_PROJECT_GROUPS.flatMap((group) => group.projects);
 function MusicDetailPage() {
   const { slug } = useParams<{ slug: string }>();
   const project = MUSIC_PROJECTS.find((item) => item.slug === slug);
+
+  useEffect(() => {
+    if (project) document.title = `${project.title} | Brandon Lien`;
+  }, [project]);
 
   if (!project) {
     return (
@@ -20,7 +26,10 @@ function MusicDetailPage() {
     );
   }
 
-  const paragraphs = (project.detailDescription ?? project.description).split('\n\n');
+  const rawText = project.detailDescription ?? project.description;
+  const paragraphs = project.albumName
+    ? rawText.split('\n\n').map((p) => p.replace(project.albumName!, `<em>${project.albumName}</em>`))
+    : rawText.split('\n\n');
   const pdfHref = project.pdfUrl ? encodeURI(project.pdfUrl) : undefined;
 
   return (
@@ -74,70 +83,65 @@ function MusicDetailPage() {
                 </div>
               ) : null}
               <div className="film-detail-header">
-                <h1 className="film-detail-title">{project.title}</h1>
                 <p className="film-detail-meta">
                   {[project.role, project.year].filter(Boolean).join(' · ') || 'Music'}
                 </p>
                 {paragraphs.map((paragraph) => (
-                  <p key={paragraph} className="film-detail-description">
-                    {paragraph}
-                  </p>
+                  <p key={paragraph} className="film-detail-description" dangerouslySetInnerHTML={{ __html: paragraph }} />
                 ))}
               </div>
             </div>
 
             {project.spotifyEmbedUrl || project.appleMusicEmbedUrl || project.tidalEmbedUrl || project.soundcloudEmbedUrl || project.bandcampEmbedUrl ? (
-              <section className="music-detail-media-section" aria-labelledby="music-listen-heading">
-                <h2 id="music-listen-heading" className="music-detail-section-title">Listen</h2>
-                <div className="music-detail-embed-grid">
-                  <div className="music-detail-embed-stack">
-                    {project.spotifyEmbedUrl ? (
-                      <div className="music-detail-audio-embed music-detail-audio-embed-spotify">
-                        <iframe
-                          src={project.spotifyEmbedUrl}
-                          title={`${project.title} Spotify embed`}
-                          loading="lazy"
-                          allow="autoplay; clipboard-write; encrypted-media; fullscreen; picture-in-picture"
-                        />
-                      </div>
-                    ) : null}
-
-                    {project.appleMusicEmbedUrl ? (
-                      <div className="music-detail-audio-embed music-detail-audio-embed-apple">
-                        <iframe
-                          src={project.appleMusicEmbedUrl}
-                          title={`${project.title} Apple Music embed`}
-                          loading="lazy"
-                          allow="autoplay *; encrypted-media *; fullscreen *; clipboard-write"
-                          sandbox="allow-forms allow-popups allow-same-origin allow-scripts allow-top-navigation-by-user-activation"
-                        />
-                      </div>
-                    ) : null}
-
-                    {project.tidalEmbedUrl ? (
-                      <div className="music-detail-audio-embed music-detail-audio-embed-tidal">
-                        <iframe
-                          src={project.tidalEmbedUrl}
-                          title={`${project.title} Tidal embed`}
-                          loading="lazy"
-                          allow="encrypted-media; fullscreen; clipboard-write https://embed.tidal.com; web-share"
-                          sandbox="allow-same-origin allow-scripts allow-forms allow-popups allow-popups-to-escape-sandbox"
-                        />
-                      </div>
-                    ) : null}
-
-                    {project.soundcloudEmbedUrl ? (
-                      <div className="music-detail-audio-embed music-detail-audio-embed-soundcloud">
-                        <iframe
-                          src={project.soundcloudEmbedUrl}
-                          title={`${project.title} SoundCloud embed`}
-                          loading="lazy"
-                          allow="autoplay"
-                          scrolling="no"
-                        />
-                      </div>
-                    ) : null}
-                  </div>
+              <section className="music-detail-media-section">
+                <div className={`music-detail-embed-grid${project.embedLayout === 'side-by-side' ? ' music-detail-embed-grid--side-by-side' : ''}`}>
+                  {project.embedLayout === 'side-by-side' ? (
+                    <>
+                      {project.spotifyEmbedUrl ? (
+                        <div className="music-detail-audio-embed music-detail-audio-embed-spotify">
+                          <iframe src={project.spotifyEmbedUrl} title={`${project.title} Spotify embed`} loading="lazy" allow="autoplay; clipboard-write; encrypted-media; fullscreen; picture-in-picture" />
+                        </div>
+                      ) : null}
+                      {project.appleMusicEmbedUrl ? (
+                        <div className="music-detail-audio-embed music-detail-audio-embed-apple">
+                          <iframe src={project.appleMusicEmbedUrl} title={`${project.title} Apple Music embed`} loading="lazy" allow="autoplay *; encrypted-media *; fullscreen *; clipboard-write" sandbox="allow-forms allow-popups allow-same-origin allow-scripts allow-top-navigation-by-user-activation" />
+                        </div>
+                      ) : null}
+                      {project.tidalEmbedUrl ? (
+                        <div className="music-detail-audio-embed music-detail-audio-embed-tidal">
+                          <iframe src={project.tidalEmbedUrl} title={`${project.title} Tidal embed`} loading="lazy" allow="encrypted-media; fullscreen; clipboard-write https://embed.tidal.com; web-share" sandbox="allow-same-origin allow-scripts allow-forms allow-popups allow-popups-to-escape-sandbox" />
+                        </div>
+                      ) : null}
+                      {project.soundcloudEmbedUrl ? (
+                        <div className="music-detail-audio-embed music-detail-audio-embed-soundcloud">
+                          <iframe src={project.soundcloudEmbedUrl} title={`${project.title} SoundCloud embed`} loading="lazy" allow="autoplay" scrolling="no" />
+                        </div>
+                      ) : null}
+                    </>
+                  ) : (
+                    <div className="music-detail-embed-stack">
+                      {project.spotifyEmbedUrl ? (
+                        <div className="music-detail-audio-embed music-detail-audio-embed-spotify">
+                          <iframe src={project.spotifyEmbedUrl} title={`${project.title} Spotify embed`} loading="lazy" allow="autoplay; clipboard-write; encrypted-media; fullscreen; picture-in-picture" />
+                        </div>
+                      ) : null}
+                      {project.appleMusicEmbedUrl ? (
+                        <div className="music-detail-audio-embed music-detail-audio-embed-apple">
+                          <iframe src={project.appleMusicEmbedUrl} title={`${project.title} Apple Music embed`} loading="lazy" allow="autoplay *; encrypted-media *; fullscreen *; clipboard-write" sandbox="allow-forms allow-popups allow-same-origin allow-scripts allow-top-navigation-by-user-activation" />
+                        </div>
+                      ) : null}
+                      {project.tidalEmbedUrl ? (
+                        <div className="music-detail-audio-embed music-detail-audio-embed-tidal">
+                          <iframe src={project.tidalEmbedUrl} title={`${project.title} Tidal embed`} loading="lazy" allow="encrypted-media; fullscreen; clipboard-write https://embed.tidal.com; web-share" sandbox="allow-same-origin allow-scripts allow-forms allow-popups allow-popups-to-escape-sandbox" />
+                        </div>
+                      ) : null}
+                      {project.soundcloudEmbedUrl ? (
+                        <div className="music-detail-audio-embed music-detail-audio-embed-soundcloud">
+                          <iframe src={project.soundcloudEmbedUrl} title={`${project.title} SoundCloud embed`} loading="lazy" allow="autoplay" scrolling="no" />
+                        </div>
+                      ) : null}
+                    </div>
+                  )}
 
                   {project.bandcampEmbedUrl ? (
                     <iframe
@@ -153,8 +157,7 @@ function MusicDetailPage() {
             ) : null}
 
             {project.videoUrl ? (
-              <section className="music-detail-media-section" aria-labelledby="music-video-heading">
-                <h2 id="music-video-heading" className="music-detail-section-title">Video</h2>
+              <section className="music-detail-media-section">
                 <div className="music-detail-video">
                   <iframe
                     src={project.videoUrl}
@@ -168,7 +171,24 @@ function MusicDetailPage() {
               </section>
             ) : null}
 
-            {project.bannerImages?.length ? (
+            {project.extraVideoUrls?.map((url) => (
+              <section key={url} className="music-detail-media-section">
+                <div className="music-detail-video">
+                  <iframe
+                    src={url}
+                    title={`${project.title} video`}
+                    loading="lazy"
+                    allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
+                    referrerPolicy="strict-origin-when-cross-origin"
+                    allowFullScreen
+                  />
+                </div>
+              </section>
+            ))}
+
+            {project.carouselImages?.length ? (
+              <MusicPhotoCarousel images={project.carouselImages} alt={project.title} />
+            ) : project.bannerImages?.length ? (
               <section className={`music-detail-banner${project.bannerLayout === 'vertical' ? ' music-detail-banner--vertical' : ''}`} aria-label={`${project.title} photo banner`}>
                 {project.bannerImages.map((imagePath) => (
                   <div key={imagePath} className="music-detail-banner-item">
@@ -179,10 +199,7 @@ function MusicDetailPage() {
             ) : null}
 
             {project.pdfUrl ? (
-              <section className="music-detail-media-section" aria-labelledby="music-links-heading">
-                <div className="music-detail-section-head">
-                  <h2 id="music-links-heading" className="music-detail-section-title">Links</h2>
-                </div>
+              <section className="music-detail-media-section">
                 <div className="music-detail-link-list">
                   {project.links?.map((link) => (
                     <a
@@ -201,15 +218,12 @@ function MusicDetailPage() {
                     rel="noreferrer"
                     className="music-detail-link-item"
                   >
-                    Brandon Lien – REMINISCENCES – Liner Notes →
+                    Brandon Lien – REMINISCENCES – Liner Notes (PDF) →
                   </a>
                 </div>
               </section>
             ) : project.links?.length ? (
-              <section className="music-detail-media-section" aria-labelledby="music-links-heading">
-                <div className="music-detail-section-head">
-                  <h2 id="music-links-heading" className="music-detail-section-title">Links</h2>
-                </div>
+              <section className="music-detail-media-section">
                 <div className="music-detail-link-list">
                   {project.links.map((link) => (
                     <a

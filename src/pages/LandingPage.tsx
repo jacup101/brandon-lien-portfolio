@@ -1,5 +1,6 @@
 import { useState } from 'react';
 import { Container } from 'react-bootstrap';
+import { Link } from 'react-router-dom';
 import SocialLinks from '../components/social/SocialLinks';
 import './LandingPage.css';
 
@@ -42,6 +43,13 @@ function LandingPage() {
             { href: 'https://www.youtube.com/channel/UCNZ_oSPzSEylE4HNqm6EoHg', ariaLabel: 'YouTube', iconClass: 'social-link-icon-youtube' },
             { href: 'https://brandonlien.bandcamp.com/', ariaLabel: 'Bandcamp', iconClass: 'social-link-icon-bandcamp' },
           ]} />
+
+          <nav className="landing-mobile-nav" aria-label="Site sections">
+            <Link to="/post-sound" className="landing-mobile-nav-link">Post Sound</Link>
+            <Link to="/film" className="landing-mobile-nav-link">Film</Link>
+            <Link to="/music" className="landing-mobile-nav-link">Music</Link>
+            <Link to="/about" className="landing-mobile-nav-link">About</Link>
+          </nav>
         </Container>
       </section>
     </main>

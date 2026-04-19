@@ -9,17 +9,21 @@ export interface MusicProject {
   imgPath?: string;
   bannerImages?: string[];
   bannerLayout?: 'vertical';
+  carouselImages?: string[];
   role?: string;
   description: string;
   year?: string;
   links?: MusicLink[];
   detailDescription?: string;
+  albumName?: string;
   videoUrl?: string;
+  extraVideoUrls?: string[];
   pdfUrl?: string;
   spotifyEmbedUrl?: string;
   appleMusicEmbedUrl?: string;
   bandcampEmbedUrl?: string;
   bandcampEmbedHeight?: number;
+  embedLayout?: 'side-by-side';
   tidalEmbedUrl?: string;
   soundcloudEmbedUrl?: string;
 }
@@ -49,7 +53,7 @@ export const MUSIC_PROJECT_GROUPS: MusicProjectGroup[] = [
         slug: 'reminiscences',
         title: 'Reminiscences',
         imgPath: '/assets/music/web/reminiscences.jpg',
-        bannerImages: [
+        carouselImages: [
           '/assets/music/reminiscences/web/ill-see-you-in-my-dreams-cover.jpg',
           '/assets/music/reminiscences/web/lily-comparison-frames.jpg',
         ],
@@ -73,17 +77,15 @@ export const MUSIC_PROJECT_GROUPS: MusicProjectGroup[] = [
         slug: 'meld-soundtrack',
         title: 'MELD Soundtrack',
         imgPath: '/assets/music/web/meld-soundtrack.jpg',
-        role: 'Original Soundtrack',
+        role: 'Album',
         year: '2018',
         description: 'Page in progress. Cues, credits, embeds, and platform links will be added here.',
         detailDescription: 'An album of songs written for my short films I made in high school. Released December 21, 2018.\n\nAll songs written by, performed by, and produced by Brandon Lien.',
         videoUrl: 'https://www.youtube.com/embed/LvddUb418-4',
+        extraVideoUrls: ['https://www.youtube.com/embed/yeQeI2DDSWQ'],
         spotifyEmbedUrl: 'https://open.spotify.com/embed/album/3cWp6W4wqaE7ew93dPBoDs?utm_source=generator',
         appleMusicEmbedUrl: 'https://embed.music.apple.com/us/album/meld-soundtrack/1487523018',
         bandcampEmbedUrl: 'https://bandcamp.com/EmbeddedPlayer/album=1362522846/size=large/bgcol=333333/linkcol=0f91ff/artwork=small/transparent=true/',
-        links: [
-          { label: 'Full Soundtrack on YouTube', href: 'https://youtu.be/yeQeI2DDSWQ' },
-        ],
       },
       {
         slug: 'aimless',
@@ -91,6 +93,7 @@ export const MUSIC_PROJECT_GROUPS: MusicProjectGroup[] = [
         imgPath: '/assets/music/web/aimless.jpg',
         role: 'Single',
         year: '2021',
+        albumName: 'Reminiscences',
         description: 'Page in progress. Music video, streaming links, and project notes will be added here.',
         detailDescription: 'A single I wrote about the feelings I felt the months after releasing my album Reminiscences. Released February 19, 2021.',
         videoUrl: 'https://www.youtube.com/embed/yJhgF9sA41Y',
@@ -98,9 +101,13 @@ export const MUSIC_PROJECT_GROUPS: MusicProjectGroup[] = [
         appleMusicEmbedUrl: 'https://embed.music.apple.com/us/album/aimless-single/1548195504',
         bandcampEmbedUrl: 'https://bandcamp.com/EmbeddedPlayer/track=2924214827/size=large/bgcol=333333/linkcol=0f91ff/tracklist=false/artwork=small/transparent=true/',
         bandcampEmbedHeight: 120,
-        bannerImages: [
-          '/assets/music/aimless/Aimless Graphic.png',
-          '/assets/music/aimless/aimless OFFICIAL SELECTION - LA Music Video Awards - 2021 (1).png',
+        carouselImages: [
+          '/assets/music/aimless/web/aimless.jpg',
+          '/assets/music/aimless/web/aimless-face-destruction.jpg',
+          '/assets/music/aimless/web/aimless-washed-out-face.jpg',
+          '/assets/music/aimless/web/aimless-face-series-1.jpg',
+          '/assets/music/aimless/web/aimless-face-series-2.jpg',
+          '/assets/music/aimless/web/aimless-face-series-3.jpg',
         ],
       },
     ],
@@ -114,31 +121,29 @@ export const MUSIC_PROJECT_GROUPS: MusicProjectGroup[] = [
         slug: 'starships-in-galactus',
         title: 'Starships in Galactus',
         imgPath: '/assets/music/web/starships-in-galactus.jpg',
-        role: 'Single',
+        role: 'Track',
         year: '2024',
-        description: 'A single by KawaiiSteez featuring Brandon Lien, from A Moment 2 Forget (2024).',
-        detailDescription: 'A single by KawaiiSteez featuring Brandon Lien, from the album A Moment 2 Forget. Released 2024.',
+        description: 'A track by KawaiiSteez featuring Brandon Lien, from A Moment 2 Forget (2024).',
+        detailDescription: 'A track by KawaiiSteez featuring Brandon Lien, from the album A Moment 2 Forget. Released 2024.',
+        albumName: 'A Moment 2 Forget',
         bandcampEmbedUrl: 'https://bandcamp.com/EmbeddedPlayer/album=3544757301/size=large/bgcol=333333/linkcol=0f91ff/tracklist=false/artwork=small/track=3280428417/transparent=true/',
         bandcampEmbedHeight: 120,
         soundcloudEmbedUrl: 'https://w.soundcloud.com/player/?url=https%3A%2F%2Fsoundcloud.com%2Fkawaiisteez%2Fstarships-in-galactus-ft&color=%23ff5500&auto_play=false&hide_related=false&show_comments=false&show_user=true&show_reposts=false&show_teaser=false',
-        links: [
-          { label: 'Bandcamp', href: 'https://kawaiisteez.bandcamp.com/track/starships-in-galactus' },
-          { label: 'SoundCloud', href: 'https://soundcloud.com/kawaiisteez/starships-in-galactus-ft?in=kawaiisteez/sets/a-moment-2-forget' },
-        ],
       },
       {
         slug: 'aspirations',
         title: 'Aspirations',
         imgPath: '/assets/music/web/aspirations.jpg',
-        role: 'Single',
+        role: 'Track',
         year: '2022',
-        description: 'A single featured on James McNary\'s album It Got Scary (2022).',
-        detailDescription: 'A single featured on James McNary\'s album It Got Scary. Released 2022.',
+        description: 'A track featured on James McNary\'s album It Got Scary (2022).',
+        detailDescription: 'A track featured on James McNary\'s album It Got Scary. Released 2022.',
+        albumName: 'It Got Scary',
         videoUrl: 'https://www.youtube.com/embed/mMUrLdyDnOw',
         appleMusicEmbedUrl: 'https://embed.music.apple.com/us/song/aspirations/1647579246',
         tidalEmbedUrl: 'https://embed.tidal.com/tracks/251220519',
-        bannerLayout: 'vertical',
-        bannerImages: [
+        embedLayout: 'side-by-side',
+        carouselImages: [
           '/assets/music/aspirations/web/title-still.jpg',
           '/assets/music/aspirations/web/lien-still-1.jpg',
           '/assets/music/aspirations/web/lien-still-2.jpg',
@@ -151,15 +156,15 @@ export const MUSIC_PROJECT_GROUPS: MusicProjectGroup[] = [
         slug: 'just-out-of-focus',
         title: 'Just Out of Focus',
         imgPath: '/assets/music/web/just-out-of-focus.jpg',
-        role: 'Single',
+        role: 'Track',
         year: '2020',
-        description: 'A single featured on Jam \'n\' Slate\'s album Is There Room in the Story For Us? (2020).',
-        detailDescription: 'A single featured on Jam \'n\' Slate\'s album Is There Room in the Story For Us? Released April 17, 2020.',
+        description: 'A track featured on Jam \'n\' Slate\'s album Is There Room in the Story For Us? (2020).',
+        detailDescription: 'A track featured on Jam \'n\' Slate\'s album Is There Room in the Story For Us? Released April 17, 2020.',
+        albumName: 'Is There Room in the Story For Us?',
         spotifyEmbedUrl: 'https://open.spotify.com/embed/track/54woOw600GX4seWbu68dgG?utm_source=generator',
         appleMusicEmbedUrl: 'https://embed.music.apple.com/us/album/just-out-of-focus-feat-brandon-lien/1503131684?i=1503131686',
-        links: [
-          { label: 'Bandcamp', href: 'https://jamnslate.bandcamp.com/track/just-out-of-focus' },
-        ],
+        bandcampEmbedUrl: 'https://bandcamp.com/EmbeddedPlayer/album=3026327990/size=large/bgcol=333333/linkcol=0f91ff/tracklist=false/artwork=small/track=191630611/transparent=true/',
+        bandcampEmbedHeight: 120,
       },
     ],
   },

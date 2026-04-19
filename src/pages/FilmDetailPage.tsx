@@ -10,7 +10,7 @@ function videoIdFromEmbed(url: string) {
   return match ? match[1] : '';
 }
 
-function GalleryThumb({ item, currentSlug, onExpand }: { item: GalleryItem; currentSlug?: string; onExpand?: (url: string) => void }) {
+function GalleryThumb({ item, currentSlug, onExpand, index = 0 }: { item: GalleryItem; currentSlug?: string; onExpand?: (index: number) => void; index?: number }) {
   if (item.type === 'instagram') {
     return (
       <div className="gallery-item-wrap">
@@ -35,7 +35,9 @@ function GalleryThumb({ item, currentSlug, onExpand }: { item: GalleryItem; curr
   if (item.type === 'image') {
     return (
       <div className="gallery-item gallery-item--image">
-        <img src={item.url} alt="" loading="lazy" />
+        <button className="gallery-item gallery-item--thumb" onClick={() => onExpand?.(index ?? 0)} style={{ background: 'none' }}>
+          <img src={item.url} alt="" loading="lazy" />
+        </button>
       </div>
     );
   }
@@ -85,7 +87,7 @@ function GalleryThumb({ item, currentSlug, onExpand }: { item: GalleryItem; curr
 
   return (
     <div className="gallery-item-wrap">
-      <button className="gallery-item gallery-item--thumb" onClick={() => onExpand?.(item.url)}>
+      <button className="gallery-item gallery-item--thumb" onClick={() => onExpand?.(index ?? 0)}>
         <img
           src={`https://img.youtube.com/vi/${id}/mqdefault.jpg`}
           alt=""
@@ -108,6 +110,34 @@ const FilmDetailPage = () => {
   const location = useLocation();
   const item = FILM_WORK.find((f) => f.slug === slug);
 
+  const [posterOpen, setPosterOpen] = useState(false);
+  const [lightboxIndex, setLightboxIndex] = useState<number | null>(null);
+
+  const expandable = (item?.gallery ?? [])
+    .map((g, i) => ({ g, i }))
+    .filter(({ g }) => g.type === 'video' || g.type === 'image');
+
+  const expandableIndices = expandable.map(({ i }) => i);
+  const lightboxPos = lightboxIndex !== null ? expandableIndices.indexOf(lightboxIndex) : -1;
+
+  const goPrev = () => lightboxPos > 0 && setLightboxIndex(expandableIndices[lightboxPos - 1]);
+  const goNext = () => lightboxPos < expandableIndices.length - 1 && setLightboxIndex(expandableIndices[lightboxPos + 1]);
+
+  useEffect(() => {
+    if (item) document.title = `${item.title} | Brandon Lien`;
+  }, [item]);
+
+  useEffect(() => {
+    if (lightboxIndex === null) return;
+    const onKey = (e: KeyboardEvent) => {
+      if (e.key === 'Escape') setLightboxIndex(null);
+      if (e.key === 'ArrowLeft') goPrev();
+      if (e.key === 'ArrowRight') goNext();
+    };
+    window.addEventListener('keydown', onKey);
+    return () => window.removeEventListener('keydown', onKey);
+  }, [lightboxIndex, lightboxPos]);
+
   if (!item) {
     return (
       <main>
@@ -120,16 +150,6 @@ const FilmDetailPage = () => {
   }
 
   const paragraphs = item.description ? item.description.split('\n\n') : [];
-  const [posterOpen, setPosterOpen] = useState(false);
-  const [lightboxVideo, setLightboxVideo] = useState<string | null>(null);
-
-  useEffect(() => {
-    if (!lightboxVideo) return;
-    const onKey = (e: KeyboardEvent) => { if (e.key === 'Escape') setLightboxVideo(null); };
-    window.addEventListener('keydown', onKey);
-    return () => window.removeEventListener('keydown', onKey);
-  }, [lightboxVideo]);
-
   const fromPage = (location.state as { from?: string } | null)?.from ?? '/film';
   const fromLabel = fromPage === '/film' ? 'Film' : (FILM_WORK.find(f => `/film/${f.slug}` === fromPage)?.title ?? 'Back');
 
@@ -167,6 +187,11 @@ const FilmDetailPage = () => {
             {item.credit && !item.credits && (
               <p className="film-detail-description">{item.credit}</p>
             )}
+            {item.imdbUrl && (
+              <a href={item.imdbUrl} target="_blank" rel="noreferrer" className="film-detail-imdb-link" aria-label="IMDb">
+                <span className="film-detail-imdb-icon" aria-hidden="true" />
+              </a>
+            )}
           </div>
         </div>
 
@@ -193,7 +218,7 @@ const FilmDetailPage = () => {
             style={item.galleryColumns ? { gridTemplateColumns: `repeat(${item.galleryColumns}, 1fr)` } : undefined}
           >
             {item.gallery.map((g, i) => (
-              <GalleryThumb key={i} item={g} currentSlug={slug} onExpand={setLightboxVideo} />
+              <GalleryThumb key={i} item={g} index={i} currentSlug={slug} onExpand={setLightboxIndex} />
             ))}
           </div>
         )}
@@ -221,21 +246,47 @@ const FilmDetailPage = () => {
         </div>
       )}
 
-      {lightboxVideo && (
-        <div className="video-lightbox" onClick={() => setLightboxVideo(null)}>
-          <div className="video-lightbox-inner" onClick={(e) => e.stopPropagation()}>
-            <button className="video-lightbox-close" onClick={() => setLightboxVideo(null)} aria-label="Close video">✕</button>
-            <div className="video-lightbox-frame">
-              <iframe
-                src={`${lightboxVideo}?autoplay=1`}
-                title="Video"
-                allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
-                allowFullScreen
-              />
+      {lightboxIndex !== null && item.gallery && (() => {
+        const current = item.gallery[lightboxIndex];
+        return (
+          <div className="video-lightbox" onClick={() => setLightboxIndex(null)}>
+            <div className="video-lightbox-inner" onClick={(e) => e.stopPropagation()}>
+              <button className="video-lightbox-close" onClick={() => setLightboxIndex(null)} aria-label="Close">✕</button>
+              {lightboxPos > 0 && (
+                <button className="lightbox-nav lightbox-nav--prev" onClick={goPrev} aria-label="Previous">‹</button>
+              )}
+              {lightboxPos < expandableIndices.length - 1 && (
+                <button className="lightbox-nav lightbox-nav--next" onClick={goNext} aria-label="Next">›</button>
+              )}
+              {current.type === 'video' ? (
+                <div className="video-lightbox-frame">
+                  <iframe
+                    key={current.url}
+                    src={`${current.url}?autoplay=1`}
+                    title="Video"
+                    allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+                    allowFullScreen
+                  />
+                </div>
+              ) : (
+                <div className="lightbox-image-wrap">
+                  <img key={current.url} src={current.url} alt="" className="lightbox-image" />
+                </div>
+              )}
+              {(current.title || current.label || current.role) && (
+                <div className="lightbox-caption">
+                  {(current.title || current.label) && (
+                    <span className="lightbox-caption-title">{current.title ?? current.label}</span>
+                  )}
+                  {current.role && (
+                    <span className="lightbox-caption-role">{current.role}</span>
+                  )}
+                </div>
+              )}
             </div>
           </div>
-        </div>
-      )}
+        );
+      })()}
     </main>
   );
 };

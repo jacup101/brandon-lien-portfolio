@@ -7,6 +7,24 @@ function ScrollToTop() {
   useEffect(() => { window.scrollTo(0, 0); }, [pathname]);
   return null;
 }
+
+const PAGE_TITLES: Record<string, string> = {
+  '/': 'Brandon Lien',
+  '/post-sound': 'Post Sound | Brandon Lien',
+  '/films': 'Post Sound | Brandon Lien',
+  '/film': 'Film | Brandon Lien',
+  '/music': 'Music | Brandon Lien',
+  '/about': 'About | Brandon Lien',
+};
+
+function PageTitle() {
+  const { pathname } = useLocation();
+  useEffect(() => {
+    const title = PAGE_TITLES[pathname];
+    if (title) document.title = title;
+  }, [pathname]);
+  return null;
+}
 import AboutPage from './pages/AboutPage';
 import FilmDetailPage from './pages/FilmDetailPage';
 import FilmPage from './pages/FilmPage';
@@ -29,6 +47,7 @@ function AppShell() {
   return (
     <div className='app-root'>
       <ScrollToTop />
+      <PageTitle />
       <NavBarComponent brand="Brandon Lien" links={navLinks} />
       <div className='page-content-padding'>
         <Routes>

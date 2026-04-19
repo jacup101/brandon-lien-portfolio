@@ -91,8 +91,8 @@
 
 .music-gallery-orbit {
   position: relative;
-  width: min(100%, 250px);
-  height: min(100%, 250px);
+  width: min(100%, 400px);
+  height: min(100%, 400px);
 }
 
 .music-gallery-orbit-svg {
@@ -121,7 +121,7 @@
   max-width: 7ch;
   color: var(--site-text);
   font-family: var(--site-font-display);
-  font-size: 0.62rem;
+  font-size: 1.3rem;
   font-weight: 300;
   letter-spacing: 0.16em;
   line-height: 1.35;
@@ -218,8 +218,8 @@
   }
 
   .music-gallery-orbit {
-    width: min(100%, 182px);
-    height: min(100%, 182px);
+    width: min(100%, 280px);
+    height: min(100%, 280px);
   }
 
   .music-gallery-orbit-text {
@@ -227,7 +227,7 @@
   }
 
   .music-gallery-coming-soon {
-    font-size: 0.5rem;
+    font-size: 1rem;
   }
 
   .music-collab-grid {

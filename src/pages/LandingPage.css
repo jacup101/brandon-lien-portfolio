@@ -86,6 +86,34 @@
   }
 }
 
+.landing-mobile-nav {
+  display: none;
+  flex-direction: column;
+  align-items: center;
+  gap: 1.4rem;
+  margin-top: 2.5rem;
+  padding-bottom: 1.5rem;
+}
+
+.landing-mobile-nav-link {
+  color: var(--site-muted);
+  font-size: 1rem;
+  letter-spacing: 0.12em;
+  text-decoration: none;
+  text-transform: uppercase;
+  transition: color 180ms ease;
+}
+
+.landing-mobile-nav-link:hover {
+  color: var(--site-text);
+}
+
+@media (max-width: 991px) {
+  .landing-mobile-nav {
+    display: flex;
+  }
+}
+
 @media (max-width: 575px) {
   .landing-section {
     padding-top: 1.25rem;

@@ -57,9 +57,7 @@
   max-width: 1120px;
   margin: 0 auto;
   overflow: hidden;
-  border: 1px solid var(--site-border);
   background: var(--site-bg-elevated);
-  box-shadow: 0 18px 40px rgba(0, 0, 0, 0.22);
   aspect-ratio: 16 / 9;
 }
 
@@ -139,9 +137,7 @@
   overflow: hidden;
   background: var(--site-bg-elevated);
   aspect-ratio: 2 / 3;
-  border: 1px solid var(--site-border);
-  box-shadow: 0 18px 40px rgba(0, 0, 0, 0.22);
-  transition: transform 180ms ease, border-color 180ms ease;
+  transition: transform 180ms ease;
 }
 
 .pp-media-skeleton {
@@ -194,7 +190,6 @@
 .pp-gallery-link:hover .pp-gallery-image-wrap,
 .pp-gallery-link:focus-visible .pp-gallery-image-wrap {
   transform: translateY(-2px);
-  border-color: rgba(201, 164, 106, 0.38);
 }
 
 @media (hover: none), (pointer: coarse) {
