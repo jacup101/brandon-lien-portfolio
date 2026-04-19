@@ -321,7 +321,7 @@
 .film-gallery {
   margin-top: 3rem;
   display: grid;
-  grid-template-columns: repeat(4, 1fr);
+  grid-template-columns: repeat(var(--gallery-cols, 4), 1fr);
   gap: 1.5rem;
 }
 

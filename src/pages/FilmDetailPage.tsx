@@ -217,7 +217,7 @@ const FilmDetailPage = () => {
         {item.gallery && item.gallery.length > 0 && (
           <div
             className="film-gallery"
-            style={item.galleryColumns ? { gridTemplateColumns: `repeat(${item.galleryColumns}, 1fr)` } : undefined}
+            style={item.galleryColumns ? { '--gallery-cols': item.galleryColumns } as React.CSSProperties : undefined}
           >
             {item.gallery.map((g, i) => (
               <GalleryThumb key={i} item={g} index={i} currentSlug={slug} onExpand={setLightboxIndex} />
