@@ -1,0 +1,231 @@
+.music-page {
+  color: var(--site-text);
+}
+
+.music-page-section {
+  padding: 1.5rem 0 4rem;
+}
+
+.music-list-group {
+  margin-top: 0;
+}
+
+.music-section-heading {
+  max-width: 960px;
+  margin: 0 auto 0.85rem;
+}
+
+.music-section-heading-secondary {
+  margin-top: 2rem;
+}
+
+.music-section-title {
+  margin: 0;
+  font-size: clamp(1.25rem, 2.1vw, 1.7rem);
+  font-weight: 300;
+  letter-spacing: 0.04em;
+  line-height: 1.2;
+  font-family: var(--site-font-body);
+}
+
+.music-section-title-secondary {
+  font-size: clamp(1rem, 1.7vw, 1.25rem);
+  color: var(--site-muted);
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
+}
+
+.music-gallery {
+  max-width: 960px;
+  margin: 0 auto;
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 1rem;
+}
+
+.music-gallery-card {
+  display: flex;
+  flex-direction: column;
+  min-width: 0;
+  background: rgba(255, 255, 255, 0.01);
+}
+
+.music-gallery-card-orbit {
+  text-decoration: none;
+  color: inherit;
+  transition: opacity 180ms ease;
+}
+
+.music-gallery-card-link {
+  text-decoration: none;
+  color: inherit;
+  transition: opacity 180ms ease;
+}
+
+.music-gallery-card-orbit:hover,
+.music-gallery-card-orbit:focus-visible,
+.music-gallery-card-link:hover,
+.music-gallery-card-link:focus-visible {
+  opacity: 0.72;
+}
+
+.music-gallery-thumb {
+  width: 100%;
+  aspect-ratio: 1 / 1;
+  overflow: hidden;
+  background: var(--site-bg-elevated);
+}
+
+.music-gallery-thumb img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display: block;
+}
+
+.music-gallery-thumb-orbit {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: transparent;
+}
+
+.music-gallery-orbit {
+  position: relative;
+  width: min(100%, 250px);
+  height: min(100%, 250px);
+}
+
+.music-gallery-orbit-svg {
+  width: 100%;
+  height: 100%;
+  display: block;
+  animation: music-gallery-orbit-spin 18s linear infinite;
+}
+
+.music-gallery-orbit-text {
+  fill: #ff2424;
+  font-family: var(--site-font-display);
+  font-size: 14px;
+  font-weight: 300;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+}
+
+.music-gallery-coming-soon {
+  position: absolute;
+  inset: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transform: translate(-50%, -50%);
+  max-width: 7ch;
+  color: var(--site-text);
+  font-family: var(--site-font-display);
+  font-size: 0.62rem;
+  font-weight: 300;
+  letter-spacing: 0.16em;
+  line-height: 1.35;
+  text-align: center;
+  text-transform: uppercase;
+}
+
+.music-gallery-copy {
+  display: flex;
+  flex-direction: column;
+  padding: 0.75rem 0.8rem 0.9rem;
+}
+
+.music-gallery-title {
+  margin: 0;
+  font-size: clamp(0.98rem, 1.6vw, 1.22rem);
+  font-weight: 300;
+  letter-spacing: 0.04em;
+  line-height: 1.25;
+  font-family: var(--site-font-body);
+}
+
+.music-collab-grid {
+  max-width: 960px;
+  margin: 1rem auto 0;
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 0.7rem;
+}
+
+.music-collab-card {
+  display: flex;
+  flex-direction: column;
+  min-width: 0;
+  background: rgba(255, 255, 255, 0.01);
+}
+
+.music-collab-thumb {
+  width: 100%;
+  aspect-ratio: 1 / 1;
+  overflow: hidden;
+  background: var(--site-bg-elevated);
+}
+
+.music-collab-thumb img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display: block;
+}
+
+.music-collab-copy {
+  padding: 0.6rem 0.65rem 0.75rem;
+}
+
+.music-collab-title {
+  margin: 0;
+  font-size: clamp(0.84rem, 1.25vw, 0.98rem);
+  font-weight: 300;
+  letter-spacing: 0.04em;
+  line-height: 1.3;
+  font-family: var(--site-font-body);
+}
+
+@keyframes music-gallery-orbit-spin {
+  from {
+    transform: rotate(0deg);
+  }
+
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+@media (max-width: 575px) {
+  .music-page-section {
+    padding: 1.5rem 0 4rem;
+  }
+
+  .music-gallery {
+    grid-template-columns: 1fr;
+    gap: 0.85rem;
+  }
+
+  .music-gallery-orbit {
+    width: min(100%, 182px);
+    height: min(100%, 182px);
+  }
+
+  .music-gallery-orbit-text {
+    font-size: 10px;
+  }
+
+  .music-gallery-coming-soon {
+    font-size: 0.5rem;
+  }
+
+  .music-collab-grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 0.6rem;
+  }
+
+  .music-collab-copy {
+    padding: 0.55rem 0.6rem 0.7rem;
+  }
+}

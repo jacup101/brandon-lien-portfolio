@@ -1,0 +1,267 @@
+.music-detail-page {
+  color: var(--site-text);
+}
+
+.music-detail-container {
+  max-width: 960px;
+}
+
+.music-detail-solo {
+  min-height: calc(100vh - 180px);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.music-detail-hero {
+  align-items: center;
+}
+
+.music-detail-art {
+  flex-shrink: 0;
+  width: 320px;
+}
+
+.music-detail-art img {
+  width: 100%;
+  display: block;
+}
+
+.music-detail-banner {
+  margin-top: 2.5rem;
+  display: grid;
+  grid-template-columns: 1.2fr 0.8fr;
+  gap: 1rem;
+}
+
+.music-detail-banner-item {
+  overflow: hidden;
+  background: var(--site-bg-elevated);
+}
+
+.music-detail-banner-item img {
+  width: 100%;
+  height: 100%;
+  display: block;
+  object-fit: cover;
+}
+
+.music-detail-media-section {
+  margin-top: 2.5rem;
+}
+
+.music-detail-section-head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1rem;
+  margin-bottom: 1rem;
+}
+
+.music-detail-section-title {
+  margin: 0;
+  font-family: var(--site-font-body);
+  font-weight: 300;
+  font-size: clamp(1.2rem, 2.2vw, 1.5rem);
+  letter-spacing: 0.04em;
+  line-height: 1.2;
+}
+
+.music-detail-actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.65rem;
+}
+
+.music-detail-action {
+  color: var(--site-muted);
+  font-size: 0.8rem;
+  letter-spacing: 0.1em;
+  text-decoration: none;
+  text-transform: uppercase;
+}
+
+.music-detail-action:hover,
+.music-detail-action:focus-visible {
+  color: var(--site-text);
+}
+
+.music-detail-link-list {
+  display: grid;
+  gap: 0.55rem;
+}
+
+.music-detail-link-item {
+  width: fit-content;
+  color: var(--site-text);
+  font-size: 0.92rem;
+  letter-spacing: 0.04em;
+  line-height: 1.4;
+  text-decoration: none;
+  transition: opacity 180ms ease;
+}
+
+.music-detail-link-item:hover,
+.music-detail-link-item:focus-visible {
+  opacity: 0.72;
+}
+
+.music-detail-video {
+  position: relative;
+  width: 100%;
+  aspect-ratio: 16 / 9;
+}
+
+.music-detail-video iframe {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  border: none;
+}
+
+.music-detail-embed-grid {
+  display: grid;
+  grid-template-columns: minmax(0, 0.95fr) minmax(0, 1.05fr);
+  align-items: start;
+  gap: 1rem;
+}
+
+.music-detail-embed-stack {
+  display: grid;
+  gap: 1rem;
+}
+
+.music-detail-audio-embed {
+  width: 100%;
+  background: transparent;
+  overflow: hidden;
+  border-radius: 14px;
+}
+
+.music-detail-audio-embed iframe {
+  width: 100%;
+  border: none;
+  display: block;
+  background: transparent;
+}
+
+.music-detail-audio-embed-spotify iframe {
+  min-height: 152px;
+  border-radius: 14px;
+}
+
+.music-detail-audio-embed-apple iframe {
+  min-height: 175px;
+  border-radius: 14px;
+}
+
+.music-detail-audio-embed-bandcamp iframe {
+  min-height: 470px;
+}
+
+.music-detail-orbit-wrap {
+  flex-shrink: 0;
+  width: 420px;
+}
+
+.music-detail-orbit {
+  position: relative;
+  width: 420px;
+  height: 420px;
+}
+
+.music-detail-orbit-svg {
+  width: 100%;
+  height: 100%;
+  display: block;
+  animation: music-detail-orbit-spin 18s linear infinite;
+  filter: drop-shadow(0 0 18px rgba(255, 36, 36, 0.2));
+}
+
+.music-detail-orbit-text {
+  fill: #ff2424;
+  font-family: var(--site-font-display);
+  font-size: 30px;
+  font-weight: 300;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+}
+
+.music-detail-coming-soon {
+  position: absolute;
+  inset: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transform: translate(-50%, -50%);
+  text-align: center;
+  max-width: 7ch;
+  color: var(--site-text);
+  font-family: var(--site-font-display);
+  font-size: 1rem;
+  font-weight: 300;
+  letter-spacing: 0.18em;
+  line-height: 1.4;
+  text-transform: uppercase;
+}
+
+@keyframes music-detail-orbit-spin {
+  from {
+    transform: rotate(0deg);
+  }
+
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+@media (max-width: 767px) {
+  .music-detail-hero {
+    align-items: flex-start;
+  }
+
+  .music-detail-banner {
+    grid-template-columns: 1fr;
+    gap: 0.75rem;
+  }
+
+  .music-detail-embed-grid {
+    grid-template-columns: 1fr;
+    gap: 0.75rem;
+  }
+
+  .music-detail-embed-stack {
+    gap: 0.75rem;
+  }
+
+  .music-detail-audio-embed-bandcamp iframe {
+    min-height: 470px;
+  }
+
+  .music-detail-section-head {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+
+  .music-detail-art {
+    width: min(82vw, 280px);
+  }
+
+  .music-detail-orbit-wrap {
+    width: min(82vw, 320px);
+  }
+
+  .music-detail-orbit {
+    width: min(82vw, 320px);
+    height: min(82vw, 320px);
+  }
+
+  .music-detail-orbit-text {
+    font-size: 22px;
+  }
+
+  .music-detail-coming-soon {
+    font-size: 0.9rem;
+  }
+}

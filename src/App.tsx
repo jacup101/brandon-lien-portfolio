@@ -12,6 +12,8 @@ import FilmDetailPage from './pages/FilmDetailPage';
 import FilmPage from './pages/FilmPage';
 import FilmsPage from './pages/FilmsPage';
 import LandingPage from './pages/LandingPage';
+import MusicDetailPage from './pages/MusicDetailPage';
+import MusicPage from './pages/MusicPage';
 import './App.css';
 import './index.css';
 import NavBarComponent from './components/util/NavBarComponent';
@@ -20,6 +22,7 @@ function AppShell() {
   const navLinks = [
     { path: "/post-sound", label: "Post Sound" },
     { path: "/film", label: "Film" },
+    { path: "/music", label: "Music" },
     { path: "/about", label: "About" },
   ];
 
@@ -33,6 +36,8 @@ function AppShell() {
           <Route path="/post-sound" element={<FilmsPage />} />
           <Route path="/film" element={<FilmPage />} />
           <Route path="/film/:slug" element={<FilmDetailPage />} />
+          <Route path="/music" element={<MusicPage />} />
+          <Route path="/music/:slug" element={<MusicDetailPage />} />
           <Route path="/about" element={<AboutPage />} />
           <Route path="/films" element={<FilmsPage />} />
         </Routes>
