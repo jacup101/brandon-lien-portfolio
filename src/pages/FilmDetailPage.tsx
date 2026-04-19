@@ -3,6 +3,7 @@ import { Container } from 'react-bootstrap';
 import { useParams, Link, useLocation } from 'react-router-dom';
 import { FILM_WORK, GalleryItem } from '../data/filmWork';
 import FilmListRow from '../components/film/FilmListRow';
+import { ChevronLeft, ChevronRight, PlayIcon } from '../components/util/Icons';
 import './FilmDetailPage.css';
 
 function videoIdFromEmbed(url: string) {
@@ -93,7 +94,7 @@ function GalleryThumb({ item, currentSlug, onExpand, index = 0 }: { item: Galler
           alt=""
           loading="lazy"
         />
-        <span className="gallery-play">▶</span>
+        <span className="gallery-play"><PlayIcon size={22} /></span>
       </button>
       {(item.title || item.role) && (
         <div className="gallery-caption">
@@ -268,10 +269,10 @@ const FilmDetailPage = () => {
               <button className="video-lightbox-close" onClick={() => setLightboxIndex(null)} aria-label="Close">✕</button>
               <div className="lightbox-content-wrap">
                 {hasPrev && (
-                  <button className="lightbox-nav lightbox-nav--prev" onClick={goPrev} aria-label="Previous">‹</button>
+                  <button className="lightbox-nav lightbox-nav--prev" onClick={goPrev} aria-label="Previous"><ChevronLeft size={28} /></button>
                 )}
                 {hasNext && (
-                  <button className="lightbox-nav lightbox-nav--next" onClick={goNext} aria-label="Next">›</button>
+                  <button className="lightbox-nav lightbox-nav--next" onClick={goNext} aria-label="Next"><ChevronRight size={28} /></button>
                 )}
                 {current.type === 'video' ? (
                   <div className="video-lightbox-frame">
@@ -301,9 +302,9 @@ const FilmDetailPage = () => {
               )}
               {expandableIndices.length > 1 && (
                 <div className="lightbox-mobile-controls">
-                  <button className="lightbox-mobile-btn" onClick={goPrev} disabled={!hasPrev} aria-label="Previous">‹</button>
+                  <button className="lightbox-mobile-btn" onClick={goPrev} disabled={!hasPrev} aria-label="Previous"><ChevronLeft size={24} /></button>
                   <span className="lightbox-mobile-count">{lightboxPos + 1} / {expandableIndices.length}</span>
-                  <button className="lightbox-mobile-btn" onClick={goNext} disabled={!hasNext} aria-label="Next">›</button>
+                  <button className="lightbox-mobile-btn" onClick={goNext} disabled={!hasNext} aria-label="Next"><ChevronRight size={24} /></button>
                 </div>
               )}
             </div>

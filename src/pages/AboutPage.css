@@ -194,6 +194,10 @@
     align-items: start;
   }
 
+  .about-hero-media {
+    order: -1;
+  }
+
   .about-hero-copy {
     max-width: none;
   }

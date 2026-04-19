@@ -1,4 +1,5 @@
 import { useState, useEffect, useRef } from 'react';
+import { ChevronLeft, ChevronRight } from '../util/Icons';
 import './MusicPhotoCarousel.css';
 
 interface Props {
@@ -53,8 +54,8 @@ export default function MusicPhotoCarousel({ images, alt = '' }: Props) {
         />
         {images.length > 1 && (
           <>
-            <button className="mpc-btn mpc-btn--prev" onClick={prev} aria-label="Previous photo">‹</button>
-            <button className="mpc-btn mpc-btn--next" onClick={next} aria-label="Next photo">›</button>
+            <button className="mpc-btn mpc-btn--prev" onClick={prev} aria-label="Previous photo"><ChevronLeft size={28} /></button>
+            <button className="mpc-btn mpc-btn--next" onClick={next} aria-label="Next photo"><ChevronRight size={28} /></button>
           </>
         )}
       </div>
