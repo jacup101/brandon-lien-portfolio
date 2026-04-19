@@ -14,7 +14,7 @@
 }
 
 .music-detail-hero {
-  align-items: center;
+  align-items: flex-start;
 }
 
 .music-detail-art {
@@ -34,6 +34,10 @@
   gap: 1rem;
 }
 
+.music-detail-banner--vertical {
+  grid-template-columns: 1fr;
+}
+
 .music-detail-banner-item {
   overflow: hidden;
   background: var(--site-bg-elevated);
@@ -41,9 +45,8 @@
 
 .music-detail-banner-item img {
   width: 100%;
-  height: 100%;
+  height: auto;
   display: block;
-  object-fit: cover;
 }
 
 .music-detail-media-section {
@@ -160,6 +163,15 @@
   min-height: 470px;
 }
 
+.music-detail-audio-embed-tidal iframe {
+  min-height: 120px;
+  border-radius: 8px;
+}
+
+.music-detail-audio-embed-soundcloud iframe {
+  min-height: 166px;
+}
+
 .music-detail-orbit-wrap {
   flex-shrink: 0;
   width: 420px;
@@ -212,7 +224,7 @@
   }
 
   to {
-    transform: rotate(360deg);
+    transform: rotate(-360deg);
   }
 }
 

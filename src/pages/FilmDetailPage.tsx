@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { Container } from 'react-bootstrap';
 import { useParams, Link, useLocation } from 'react-router-dom';
 import { FILM_WORK, GalleryItem } from '../data/filmWork';
@@ -10,9 +10,7 @@ function videoIdFromEmbed(url: string) {
   return match ? match[1] : '';
 }
 
-function GalleryThumb({ item, currentSlug }: { item: GalleryItem; currentSlug?: string }) {
-  const [active, setActive] = useState(false);
-
+function GalleryThumb({ item, currentSlug, onExpand }: { item: GalleryItem; currentSlug?: string; onExpand?: (url: string) => void }) {
   if (item.type === 'instagram') {
     return (
       <div className="gallery-item-wrap">
@@ -85,30 +83,9 @@ function GalleryThumb({ item, currentSlug }: { item: GalleryItem; currentSlug?: 
 
   const id = videoIdFromEmbed(item.url);
 
-  if (active) {
-    return (
-      <div className="gallery-item-wrap">
-        <div className="gallery-item gallery-item--active">
-          <iframe
-            src={`${item.url}?autoplay=1`}
-            title={id}
-            allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
-            allowFullScreen
-          />
-        </div>
-        {(item.title || item.role) && (
-          <div className="gallery-caption">
-            {item.title && <span className="gallery-caption-title">{item.title}</span>}
-            {item.role && <span className="gallery-caption-role">{item.role}</span>}
-          </div>
-        )}
-      </div>
-    );
-  }
-
   return (
     <div className="gallery-item-wrap">
-      <button className="gallery-item gallery-item--thumb" onClick={() => setActive(true)}>
+      <button className="gallery-item gallery-item--thumb" onClick={() => onExpand?.(item.url)}>
         <img
           src={`https://img.youtube.com/vi/${id}/mqdefault.jpg`}
           alt=""
@@ -144,6 +121,15 @@ const FilmDetailPage = () => {
 
   const paragraphs = item.description ? item.description.split('\n\n') : [];
   const [posterOpen, setPosterOpen] = useState(false);
+  const [lightboxVideo, setLightboxVideo] = useState<string | null>(null);
+
+  useEffect(() => {
+    if (!lightboxVideo) return;
+    const onKey = (e: KeyboardEvent) => { if (e.key === 'Escape') setLightboxVideo(null); };
+    window.addEventListener('keydown', onKey);
+    return () => window.removeEventListener('keydown', onKey);
+  }, [lightboxVideo]);
+
   const fromPage = (location.state as { from?: string } | null)?.from ?? '/film';
   const fromLabel = fromPage === '/film' ? 'Film' : (FILM_WORK.find(f => `/film/${f.slug}` === fromPage)?.title ?? 'Back');
 
@@ -207,7 +193,7 @@ const FilmDetailPage = () => {
             style={item.galleryColumns ? { gridTemplateColumns: `repeat(${item.galleryColumns}, 1fr)` } : undefined}
           >
             {item.gallery.map((g, i) => (
-              <GalleryThumb key={i} item={g} currentSlug={slug} />
+              <GalleryThumb key={i} item={g} currentSlug={slug} onExpand={setLightboxVideo} />
             ))}
           </div>
         )}
@@ -232,6 +218,22 @@ const FilmDetailPage = () => {
       {posterOpen && item.imgPath && (
         <div className="poster-lightbox" onClick={() => setPosterOpen(false)}>
           <img src={item.imgPath} alt={item.title} />
+        </div>
+      )}
+
+      {lightboxVideo && (
+        <div className="video-lightbox" onClick={() => setLightboxVideo(null)}>
+          <div className="video-lightbox-inner" onClick={(e) => e.stopPropagation()}>
+            <button className="video-lightbox-close" onClick={() => setLightboxVideo(null)} aria-label="Close video">✕</button>
+            <div className="video-lightbox-frame">
+              <iframe
+                src={`${lightboxVideo}?autoplay=1`}
+                title="Video"
+                allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+                allowFullScreen
+              />
+            </div>
+          </div>
         </div>
       )}
     </main>

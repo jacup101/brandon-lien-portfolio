@@ -10,10 +10,7 @@ function MusicPage() {
     <main className="film-list-page music-page">
       <section className="film-list-section music-page-section">
         <Container>
-          <section className="music-list-group" aria-labelledby={`${featuredProjects.id}-heading`}>
-            <div className="music-section-heading">
-              <h1 id={`${featuredProjects.id}-heading`} className="music-section-title">Music</h1>
-            </div>
+          <section className="music-list-group" aria-label="Music projects">
             <div className="music-gallery">
               {featuredProjects.projects.map((project) => (
                 project.slug === 'love-cycles' ? (
@@ -80,7 +77,7 @@ function MusicPage() {
             </div>
             <div className="music-collab-grid">
               {collaborations.projects.map((project) => (
-                <article key={project.slug} className="music-collab-card">
+                <Link key={project.slug} to={`/music/${project.slug}`} className="music-collab-card music-collab-card-link">
                   {project.imgPath ? (
                     <div className="music-collab-thumb">
                       <img
@@ -94,7 +91,7 @@ function MusicPage() {
                   <div className="music-collab-copy">
                     <h3 className="music-collab-title">{project.title}</h3>
                   </div>
-                </article>
+                </Link>
               ))}
             </div>
           </section>

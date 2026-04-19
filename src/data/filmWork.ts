@@ -38,7 +38,7 @@ export const FILM_WORK: FilmItem[] = [
     year: '2024',
     role: 'Director, Editor',
     blurb: 'Documentary short film about the publication El Malcriado and the role of its first run during the farmworker movement. Created as a part of the Farmworker Movement Collection by the Tom & Ethel Bradley Center at California State University Northridge. Recipient of National Endowment for the Humanities grant.',
-    imgPath: '/assets/film/el_malcriado.png',
+    imgPath: '/assets/film/web/el-malcriado.jpg',
     description: 'A documentary about the voice of the farmworker movement, the publication El Malcriado, covering the first run from its inception in 1964 to 1967. El Malcriado played a pivotal role in distributing information about the strike, boycott, and union; its satirical cartoons and editorials also captured the cultural revolutionary inspired psyche of the movement.',
     videoUrl: 'https://www.youtube.com/embed/5OqH0IIgEY8',
     credit: 'Created using oral histories and photographic material from collections at the California State University Northridge Tom and Ethel Bradley Center. Recipient of National Endowment for the Humanities grant. © Tom and Ethel Bradley Center',
@@ -49,7 +49,7 @@ export const FILM_WORK: FilmItem[] = [
     year: '2021',
     role: 'Director, Producer',
     blurb: 'Documentary short film about Trish Thuy Trang, a Vietnamese American singer, entrepreneur, mother, and artist. Created for California State University Northridge Vietnamese Student Association\'s Vietnamese Culture Night.',
-    imgPath: '/assets/film/shades_of_trish.png',
+    imgPath: '/assets/film/web/shades-of-trish.jpg',
     description: 'Created for California State University Northridge Vietnamese Student Association\'s Vietnamese Culture Night. This documentary is about Trish Thuy Trang, a Vietnamese American singer, entrepreneur, mother, and artist.',
     videoUrl: 'https://www.youtube.com/embed/cQIKE_zjR0U',
     credits: [
@@ -77,7 +77,7 @@ export const FILM_WORK: FilmItem[] = [
     galleryColumns: 3,
     description: 'I have worked at California State University Northridge\'s Tom & Ethel Bradley Center since 2021 as a video editor, videographer, transcriptionist, and researcher.\n\nThe Bradley Center is a repository and archive of photographic and audiovisual work primarily documenting the social, cultural, and political lives of the diverse communities of Los Angeles and Southern California from the 1910s to present.\n\nI started working as a student, and then after graduating, continued to work under a grant from the National Endowment for the Humanities. I worked on the Black Power Archives, Black Entertainment Archives, and Farmworker Movement oral history collections.\n\nSelected work below; more can be found on the Bradley Center\'s website and YouTube channel.',
     gallery: [
-      { type: 'link', url: '/film/el-malcriado', label: 'El Malcriado: The Voice of the Farm Worker', imgPath: '/assets/film/el_malcriado.png' },
+      { type: 'link', url: '/film/el-malcriado', label: 'El Malcriado: The Voice of the Farm Worker', imgPath: '/assets/film/web/el-malcriado.jpg' },
       { type: 'video', url: 'https://www.youtube.com/embed/rvLna6YadDY' },
       { type: 'video', url: 'https://www.youtube.com/embed/V7W1o69llZM' },
       { type: 'video', url: 'https://www.youtube.com/embed/3nLvwHfOB38' },

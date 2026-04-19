@@ -43,7 +43,7 @@ export const POST_PRODUCTION_WORK: PostProductionWork[] = [
     type: PostProductionWorkType.Short,
     year: '',
     link: '#',
-    imgPath: '/assets/film/web/24-in-25.png',
+    imgPath: '/assets/film/web/24-in-25.jpg',
     featured: true,
   },
   {
@@ -151,7 +151,7 @@ export const POST_PRODUCTION_WORK: PostProductionWork[] = [
     type: PostProductionWorkType.Short,
     year: '',
     link: 'https://www.imdb.com/title/tt34901039/?ref_=nm_flmg_job_1_accord_2_cdt_t_14',
-    imgPath: '/assets/film/web/transparent-moment.png',
+    imgPath: '/assets/film/web/transparent-moment.jpg',
     featured: true,
   },
   {

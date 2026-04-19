@@ -29,6 +29,7 @@ function LandingPage() {
                 onLoadedMetadata={() => setReelLoaded(true)}
                 onCanPlay={() => setReelLoaded(true)}
                 onError={() => setReelError(true)}
+                onContextMenu={(e) => e.preventDefault()}
               >
                 <source src="/assets/loop-web-silent.mp4" type="video/mp4" />
               </video>

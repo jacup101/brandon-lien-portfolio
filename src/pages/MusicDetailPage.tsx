@@ -86,7 +86,7 @@ function MusicDetailPage() {
               </div>
             </div>
 
-            {project.spotifyEmbedUrl || project.appleMusicEmbedUrl || project.bandcampEmbedUrl ? (
+            {project.spotifyEmbedUrl || project.appleMusicEmbedUrl || project.tidalEmbedUrl || project.soundcloudEmbedUrl || project.bandcampEmbedUrl ? (
               <section className="music-detail-media-section" aria-labelledby="music-listen-heading">
                 <h2 id="music-listen-heading" className="music-detail-section-title">Listen</h2>
                 <div className="music-detail-embed-grid">
@@ -113,13 +113,37 @@ function MusicDetailPage() {
                         />
                       </div>
                     ) : null}
+
+                    {project.tidalEmbedUrl ? (
+                      <div className="music-detail-audio-embed music-detail-audio-embed-tidal">
+                        <iframe
+                          src={project.tidalEmbedUrl}
+                          title={`${project.title} Tidal embed`}
+                          loading="lazy"
+                          allow="encrypted-media; fullscreen; clipboard-write https://embed.tidal.com; web-share"
+                          sandbox="allow-same-origin allow-scripts allow-forms allow-popups allow-popups-to-escape-sandbox"
+                        />
+                      </div>
+                    ) : null}
+
+                    {project.soundcloudEmbedUrl ? (
+                      <div className="music-detail-audio-embed music-detail-audio-embed-soundcloud">
+                        <iframe
+                          src={project.soundcloudEmbedUrl}
+                          title={`${project.title} SoundCloud embed`}
+                          loading="lazy"
+                          allow="autoplay"
+                          scrolling="no"
+                        />
+                      </div>
+                    ) : null}
                   </div>
 
                   {project.bandcampEmbedUrl ? (
                     <iframe
                       className="music-detail-bandcamp-embed"
-                      style={{ border: 0, width: '100%', height: '472px' }}
-                      src="https://bandcamp.com/EmbeddedPlayer/album=3398792718/size=large/bgcol=333333/linkcol=0f91ff/artwork=small/transparent=true/"
+                      style={{ border: 0, width: '100%', height: `${project.bandcampEmbedHeight ?? 472}px` }}
+                      src={project.bandcampEmbedUrl}
                       title={`${project.title} Bandcamp embed`}
                       seamless
                     />
@@ -145,7 +169,7 @@ function MusicDetailPage() {
             ) : null}
 
             {project.bannerImages?.length ? (
-              <section className="music-detail-banner" aria-label={`${project.title} photo banner`}>
+              <section className={`music-detail-banner${project.bannerLayout === 'vertical' ? ' music-detail-banner--vertical' : ''}`} aria-label={`${project.title} photo banner`}>
                 {project.bannerImages.map((imagePath) => (
                   <div key={imagePath} className="music-detail-banner-item">
                     <img src={imagePath} alt="" loading="lazy" decoding="async" />
@@ -168,7 +192,7 @@ function MusicDetailPage() {
                       rel="noreferrer"
                       className="music-detail-link-item"
                     >
-                      {link.label}
+                      {link.label} →
                     </a>
                   ))}
                   <a
@@ -177,7 +201,7 @@ function MusicDetailPage() {
                     rel="noreferrer"
                     className="music-detail-link-item"
                   >
-                    Open PDF
+                    Brandon Lien – REMINISCENCES – Liner Notes →
                   </a>
                 </div>
               </section>
@@ -195,7 +219,7 @@ function MusicDetailPage() {
                       rel="noreferrer"
                       className="music-detail-link-item"
                     >
-                      {link.label}
+                      {link.label} →
                     </a>
                   ))}
                 </div>
