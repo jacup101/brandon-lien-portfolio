@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useRef } from 'react';
 import './MusicPhotoCarousel.css';
 
 interface Props {
@@ -9,12 +9,21 @@ interface Props {
 export default function MusicPhotoCarousel({ images, alt = '' }: Props) {
   const [index, setIndex] = useState(0);
   const [aspectRatio, setAspectRatio] = useState<string | null>(null);
+  const touchStartX = useRef<number | null>(null);
 
   useEffect(() => {
     const img = new Image();
     img.onload = () => setAspectRatio(`${img.naturalWidth} / ${img.naturalHeight}`);
     img.src = images[0];
   }, [images[0]]);
+
+  // Preload all images
+  useEffect(() => {
+    images.forEach((src) => {
+      const img = new Image();
+      img.src = src;
+    });
+  }, [images]);
 
   if (images.length === 0) return null;
 
@@ -23,13 +32,23 @@ export default function MusicPhotoCarousel({ images, alt = '' }: Props) {
 
   return (
     <div className="mpc-root">
-      <div className="mpc-stage" style={aspectRatio ? { aspectRatio } : undefined}>
+      <div
+        className="mpc-stage"
+        style={aspectRatio ? { aspectRatio } : undefined}
+        onTouchStart={(e) => { touchStartX.current = e.touches[0].clientX; }}
+        onTouchEnd={(e) => {
+          if (touchStartX.current === null) return;
+          const dx = e.changedTouches[0].clientX - touchStartX.current;
+          if (dx > 50) prev();
+          else if (dx < -50) next();
+          touchStartX.current = null;
+        }}
+      >
         <img
           key={images[index]}
           src={images[index]}
           alt={alt}
           className="mpc-img"
-          loading="lazy"
           decoding="async"
         />
         {images.length > 1 && (

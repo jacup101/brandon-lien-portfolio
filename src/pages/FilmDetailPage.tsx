@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useRef } from 'react';
 import { Container } from 'react-bootstrap';
 import { useParams, Link, useLocation } from 'react-router-dom';
 import { FILM_WORK, GalleryItem } from '../data/filmWork';
@@ -112,6 +112,7 @@ const FilmDetailPage = () => {
 
   const [posterOpen, setPosterOpen] = useState(false);
   const [lightboxIndex, setLightboxIndex] = useState<number | null>(null);
+  const touchStartX = useRef<number | null>(null);
 
   const expandable = (item?.gallery ?? [])
     .map((g, i) => ({ g, i }))
@@ -248,31 +249,46 @@ const FilmDetailPage = () => {
 
       {lightboxIndex !== null && item.gallery && (() => {
         const current = item.gallery[lightboxIndex];
+        const hasPrev = lightboxPos > 0;
+        const hasNext = lightboxPos < expandableIndices.length - 1;
         return (
-          <div className="video-lightbox" onClick={() => setLightboxIndex(null)}>
+          <div
+            className="video-lightbox"
+            onClick={() => setLightboxIndex(null)}
+            onTouchStart={(e) => { touchStartX.current = e.touches[0].clientX; }}
+            onTouchEnd={(e) => {
+              if (touchStartX.current === null) return;
+              const dx = e.changedTouches[0].clientX - touchStartX.current;
+              if (dx > 50 && hasPrev) goPrev();
+              else if (dx < -50 && hasNext) goNext();
+              touchStartX.current = null;
+            }}
+          >
             <div className="video-lightbox-inner" onClick={(e) => e.stopPropagation()}>
               <button className="video-lightbox-close" onClick={() => setLightboxIndex(null)} aria-label="Close">✕</button>
-              {lightboxPos > 0 && (
-                <button className="lightbox-nav lightbox-nav--prev" onClick={goPrev} aria-label="Previous">‹</button>
-              )}
-              {lightboxPos < expandableIndices.length - 1 && (
-                <button className="lightbox-nav lightbox-nav--next" onClick={goNext} aria-label="Next">›</button>
-              )}
-              {current.type === 'video' ? (
-                <div className="video-lightbox-frame">
-                  <iframe
-                    key={current.url}
-                    src={`${current.url}?autoplay=1`}
-                    title="Video"
-                    allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
-                    allowFullScreen
-                  />
-                </div>
-              ) : (
-                <div className="lightbox-image-wrap">
-                  <img key={current.url} src={current.url} alt="" className="lightbox-image" />
-                </div>
-              )}
+              <div className="lightbox-content-wrap">
+                {hasPrev && (
+                  <button className="lightbox-nav lightbox-nav--prev" onClick={goPrev} aria-label="Previous">‹</button>
+                )}
+                {hasNext && (
+                  <button className="lightbox-nav lightbox-nav--next" onClick={goNext} aria-label="Next">›</button>
+                )}
+                {current.type === 'video' ? (
+                  <div className="video-lightbox-frame">
+                    <iframe
+                      key={current.url}
+                      src={`${current.url}?autoplay=1`}
+                      title="Video"
+                      allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+                      allowFullScreen
+                    />
+                  </div>
+                ) : (
+                  <div className="lightbox-image-wrap">
+                    <img key={current.url} src={current.url} alt="" className="lightbox-image" />
+                  </div>
+                )}
+              </div>
               {(current.title || current.label || current.role) && (
                 <div className="lightbox-caption">
                   {(current.title || current.label) && (
@@ -281,6 +297,13 @@ const FilmDetailPage = () => {
                   {current.role && (
                     <span className="lightbox-caption-role">{current.role}</span>
                   )}
+                </div>
+              )}
+              {expandableIndices.length > 1 && (
+                <div className="lightbox-mobile-controls">
+                  <button className="lightbox-mobile-btn" onClick={goPrev} disabled={!hasPrev} aria-label="Previous">‹</button>
+                  <span className="lightbox-mobile-count">{lightboxPos + 1} / {expandableIndices.length}</span>
+                  <button className="lightbox-mobile-btn" onClick={goNext} disabled={!hasNext} aria-label="Next">›</button>
                 </div>
               )}
             </div>
