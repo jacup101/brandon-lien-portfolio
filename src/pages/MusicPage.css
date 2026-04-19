@@ -156,7 +156,6 @@
   display: flex;
   flex-direction: column;
   min-width: 0;
-  background: rgba(255, 255, 255, 0.01);
 }
 
 .music-collab-card-link {
@@ -185,7 +184,7 @@
 }
 
 .music-collab-copy {
-  padding: 0.6rem 0.65rem 0.75rem;
+  padding: 0.6rem 0 0.75rem;
 }
 
 .music-collab-title {
@@ -236,6 +235,6 @@
   }
 
   .music-collab-copy {
-    padding: 0.55rem 0.6rem 0.7rem;
+    padding: 0.55rem 0 0.7rem;
   }
 }
