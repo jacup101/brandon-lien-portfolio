@@ -97,8 +97,9 @@
 
 .landing-mobile-nav-link {
   color: var(--site-muted);
-  font-size: 1rem;
+  font-size: 0.82rem;
   letter-spacing: 0.12em;
+  -webkit-text-stroke: 0.4px currentColor;
   text-decoration: none;
   text-transform: uppercase;
   transition: color 180ms ease;

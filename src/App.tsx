@@ -26,6 +26,7 @@ function PageTitle() {
   return null;
 }
 import AboutPage from './pages/AboutPage';
+import NotFoundPage from './pages/NotFoundPage';
 import FilmDetailPage from './pages/FilmDetailPage';
 import FilmPage from './pages/FilmPage';
 import FilmsPage from './pages/FilmsPage';
@@ -59,6 +60,7 @@ function AppShell() {
           <Route path="/music/:slug" element={<MusicDetailPage />} />
           <Route path="/about" element={<AboutPage />} />
           <Route path="/films" element={<FilmsPage />} />
+          <Route path="*" element={<NotFoundPage />} />
         </Routes>
       </div>
     </div>
