@@ -259,6 +259,11 @@ function AboutPage() {
                 <h2 className="about-subtitle">Contact Me</h2>
               </div>
 
+              <div style={{ marginBottom: '1.5rem' }}>
+                <p style={{ margin: '0 0 0.3rem', color: 'var(--site-muted)', fontSize: '0.9rem' }}>brandonlienaudio@gmail.com</p>
+                <p style={{ margin: 0, color: 'var(--site-muted)', fontSize: '0.9rem' }}>brandonlien96@gmail.com</p>
+              </div>
+
               <Form className="about-form" onSubmit={handleSubmit}>
                 <Row className="g-3">
                   <Col md={6}>
