@@ -83,10 +83,6 @@
   -moz-osx-font-smoothing: grayscale;
 }
 
-html {
-  background-color: var(--site-bg) !important;
-}
-
 html,
 body {
   margin: 0;
