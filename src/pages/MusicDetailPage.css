@@ -215,7 +215,7 @@
   max-width: 7ch;
   color: var(--site-text);
   font-family: var(--site-font-display);
-  font-size: 1rem;
+  font-size: 1.3rem;
   font-weight: 300;
   letter-spacing: 0.18em;
   line-height: 1.4;
@@ -282,6 +282,6 @@
   }
 
   .music-detail-coming-soon {
-    font-size: 0.9rem;
+    font-size: 1rem;
   }
 }

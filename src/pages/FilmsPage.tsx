@@ -1,15 +1,18 @@
-import { useState } from 'react';
+import { useState, useRef } from 'react';
 import { Container } from 'react-bootstrap';
 import PostProductionGallery from '../components/postProduction/PostProductionGallery';
 
-const REEL_BASE = 'https://www.youtube.com/embed/656A-WOA-lk?rel=0&modestbranding=1&playsinline=1';
+const REEL_SRC = 'https://www.youtube.com/embed/656A-WOA-lk?rel=0&modestbranding=1&playsinline=1&enablejsapi=1';
 
 const FilmsPage = () => {
   const [reelLoaded, setReelLoaded] = useState(false);
-  const [reelSrc, setReelSrc] = useState(REEL_BASE);
+  const iframeRef = useRef<HTMLIFrameElement>(null);
 
   const handleReelClick = () => {
-    setReelSrc(`${REEL_BASE}&autoplay=1`);
+    iframeRef.current?.contentWindow?.postMessage(
+      JSON.stringify({ event: 'command', func: 'playVideo', args: [] }),
+      'https://www.youtube.com'
+    );
   };
 
   return (
@@ -41,8 +44,9 @@ const FilmsPage = () => {
                 <div className="pp-media-skeleton" aria-hidden="true" />
               ) : null}
               <iframe
+                ref={iframeRef}
                 className={`pp-reels-embed ${reelLoaded ? 'pp-reels-embed-loaded' : ''}`}
-                src={reelSrc}
+                src={REEL_SRC}
                 title="Post-production sound reel"
                 loading="lazy"
                 allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
