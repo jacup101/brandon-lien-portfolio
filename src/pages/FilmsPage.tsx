@@ -1,8 +1,44 @@
-import { useState, useRef } from 'react';
+import { Fragment, useState, useRef } from 'react';
 import { Container } from 'react-bootstrap';
 import PostProductionGallery from '../components/postProduction/PostProductionGallery';
 
 const REEL_SRC = 'https://www.youtube.com/embed/656A-WOA-lk?rel=0&modestbranding=1&playsinline=1&enablejsapi=1';
+
+interface ExperienceRole {
+  period: string;
+  title: string;
+}
+
+interface ExperienceEntry {
+  company: string;
+  link: string;
+  roles: ExperienceRole[];
+}
+
+const EXPERIENCE: ExperienceEntry[] = [
+  {
+    company: 'C4 Studios',
+    link: 'https://www.c4-studios.com/',
+    roles: [
+      { period: 'April 2026 – Current', title: 'Sound editor, sound designer, sound mixer' },
+    ],
+  },
+  {
+    company: 'Enhanced Media',
+    link: 'https://enhanced.media/',
+    roles: [
+      { period: 'September 2023 – December 2025', title: 'Sound editor, sound mixer, foley recordist, foley artist' },
+      { period: 'April 2023 – September 2023', title: 'Intern' },
+    ],
+  },
+  {
+    company: 'Formosa Group',
+    link: 'https://formosagroup.com/',
+    roles: [
+      { period: 'August 2023 – September 2023', title: 'Intern' },
+    ],
+  },
+];
 
 const FilmsPage = () => {
   const [reelLoaded, setReelLoaded] = useState(false);
@@ -35,6 +71,28 @@ const FilmsPage = () => {
 
           <section id="gallery" className="pp-page-section" aria-label="Gallery">
             <PostProductionGallery />
+          </section>
+
+          <section className="pp-page-section pp-experience-section" aria-label="Employment">
+            <div className="pp-section-divider" aria-hidden="true" />
+            <p className="pp-section-eyebrow">Employment</p>
+            <div className="pp-experience-list">
+              {EXPERIENCE.map((entry) => (
+                <Fragment key={entry.company}>
+                  <h3 className="pp-experience-company">
+                    <a href={entry.link} target="_blank" rel="noreferrer">
+                      {entry.company}
+                    </a>
+                  </h3>
+                  {entry.roles.map((role) => (
+                    <Fragment key={role.period}>
+                      <span className="pp-experience-period">{role.period}</span>
+                      <span className="pp-experience-title">{role.title}</span>
+                    </Fragment>
+                  ))}
+                </Fragment>
+              ))}
+            </div>
           </section>
 
           <section id="reels" className="pp-page-section pp-reels-section" aria-label="Reels">

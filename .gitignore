@@ -13,6 +13,9 @@ dist-ssr
 *.local
 .dev.vars
 .dev.vars.*
+.wrangler
+admin/tmp-uploads/*
+!admin/tmp-uploads/.gitkeep
 
 # Editor directories and files
 .vscode/*

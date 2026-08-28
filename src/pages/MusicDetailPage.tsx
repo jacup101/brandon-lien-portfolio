@@ -83,6 +83,7 @@ function MusicDetailPage() {
                 </div>
               ) : null}
               <div className="film-detail-header">
+                <h1 className="film-detail-title">{project.title}</h1>
                 <p className="film-detail-meta">
                   {[project.role, project.year].filter(Boolean).join(' · ') || 'Music'}
                 </p>

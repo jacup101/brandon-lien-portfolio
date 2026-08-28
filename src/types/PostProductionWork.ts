@@ -12,6 +12,7 @@ export interface PostProductionWork {
   link: string;
   imgPath: string;
   featured: boolean;
+  updatedAt?: number;
 }
 
 export const DEFAULT_POST_PRODUCTION_WORK: PostProductionWork = {

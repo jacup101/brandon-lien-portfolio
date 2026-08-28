@@ -45,6 +45,70 @@
   margin-top: 4rem;
 }
 
+.pp-experience-section {
+  margin-top: 4rem;
+}
+
+.pp-section-eyebrow {
+  max-width: 1120px;
+  margin: 0 auto 1.5rem;
+  color: var(--site-text);
+  font-family: var(--site-font-display);
+  font-size: clamp(1.35rem, 2.7vw, 1.9rem);
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  -webkit-text-stroke: 0.3px currentColor;
+}
+
+.pp-experience-list {
+  max-width: 1120px;
+  margin: 0 auto;
+  display: grid;
+  grid-template-columns: max-content 1fr;
+  column-gap: 1.5rem;
+  row-gap: 0.4rem;
+  align-items: baseline;
+}
+
+.pp-experience-company {
+  grid-column: 1 / -1;
+  margin: 1.75rem 0 0.3rem;
+  font-family: var(--site-font-body);
+  font-weight: 600;
+  font-size: 1rem;
+  letter-spacing: 0.01em;
+}
+
+.pp-experience-company a {
+  color: inherit;
+  text-decoration: none;
+  border-bottom: 1px solid var(--site-border);
+  transition: color 150ms ease, border-color 150ms ease;
+}
+
+.pp-experience-company a:hover,
+.pp-experience-company a:focus-visible {
+  color: var(--site-accent);
+  border-color: var(--site-accent);
+}
+
+.pp-experience-list > .pp-experience-company:first-child {
+  margin-top: 0;
+}
+
+.pp-experience-period {
+  white-space: nowrap;
+  color: var(--site-muted);
+  font-size: 0.78rem;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+}
+
+.pp-experience-title {
+  color: var(--site-muted);
+  font-size: 0.92rem;
+}
+
 .pp-section-divider {
   max-width: 1120px;
   height: 1px;
@@ -253,6 +317,15 @@
   .pp-gallery-loading {
     grid-template-columns: repeat(2, minmax(0, 1fr));
     max-width: 620px;
+  }
+
+  .pp-experience-list {
+    grid-template-columns: 1fr;
+    row-gap: 0.2rem;
+  }
+
+  .pp-experience-title {
+    margin-bottom: 0.5rem;
   }
 }
 

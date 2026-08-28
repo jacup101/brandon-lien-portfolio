@@ -227,7 +227,7 @@ function AboutPage() {
             <section className="about-image-strip about-section" aria-label="Additional portraits">
               <div className="about-strip-image-frame">
                 <img
-                  src="/assets/about-web/banner-1.jpg"
+                  src="/assets/about-web/banner-3.jpg"
                   alt="Brandon Lien portrait"
                   className="about-strip-image"
                   loading="lazy"
@@ -245,9 +245,9 @@ function AboutPage() {
               </div>
               <div className="about-strip-image-frame">
                 <img
-                  src="/assets/about-web/banner-3.jpg"
+                  src="/assets/about-web/new-portrait.jpg"
                   alt="Brandon Lien portrait"
-                  className="about-strip-image"
+                  className="about-strip-image about-strip-image-top"
                   loading="lazy"
                   decoding="async"
                 />

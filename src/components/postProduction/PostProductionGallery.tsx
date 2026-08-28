@@ -23,7 +23,7 @@ function PostProductionGallery(props: PostProductionGalleryProps) {
         const cardContent = (
           <div className="pp-gallery-image-wrap">
             <img
-              src={encodeURI(item.imgPath)}
+              src={encodeURI(item.imgPath) + (item.updatedAt ? `?v=${item.updatedAt}` : '')}
               alt={item.title}
               className="pp-gallery-image"
               loading={index < 8 ? 'eager' : 'lazy'}

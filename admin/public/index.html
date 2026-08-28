@@ -1,0 +1,86 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <title>Post-Sound Admin</title>
+    <link rel="stylesheet" href="/styles.css" />
+  </head>
+  <body class="app-root">
+    <header class="topbar">
+      <div>
+        <h1>Post-Sound Credits</h1>
+        <p class="subtitle">
+          This mirrors the live <code>/post-sound</code> gallery. Drag cards to reorder, hover for
+          edit/delete. Local-only — changes commit to git automatically, but never push.
+        </p>
+      </div>
+      <div class="topbar-actions">
+        <button id="save-order-btn" class="btn btn-secondary" disabled>Save Order</button>
+      </div>
+    </header>
+
+    <div id="status" class="status" hidden></div>
+
+    <main>
+      <ul id="entry-list" class="pp-gallery admin-gallery"></ul>
+    </main>
+
+    <button id="add-btn" class="fab" title="Add New Credit" aria-label="Add New Credit">&#43;</button>
+
+    <dialog id="entry-dialog">
+      <form id="entry-form" novalidate>
+        <h2 id="dialog-title">Add Credit</h2>
+        <input type="hidden" id="entry-id" name="id" />
+
+        <label>
+          Title
+          <input type="text" id="field-title" name="title" required />
+        </label>
+
+        <label>
+          Role
+          <input type="text" id="field-role" name="role" required />
+        </label>
+
+        <label>
+          Type
+          <select id="field-type" name="type" required>
+            <option value="Feature">Feature</option>
+            <option value="Short">Short</option>
+            <option value="Vertical">Vertical</option>
+          </select>
+        </label>
+
+        <label>
+          Year
+          <input type="text" id="field-year" name="year" />
+        </label>
+
+        <label>
+          Link
+          <input type="url" id="field-link" name="link" placeholder="https://..." />
+        </label>
+
+        <label class="checkbox-label">
+          <input type="checkbox" id="field-featured" name="featured" checked />
+          Featured
+        </label>
+
+        <label>
+          Image <span id="image-hint" class="hint">(required)</span>
+          <input type="file" id="field-image" name="image" accept="image/*" />
+        </label>
+        <img id="current-image-preview" class="current-image-preview" hidden />
+
+        <p id="form-error" class="form-error" hidden></p>
+
+        <div class="dialog-actions">
+          <button type="button" id="cancel-btn" class="btn btn-secondary">Cancel</button>
+          <button type="submit" class="btn btn-primary">Save</button>
+        </div>
+      </form>
+    </dialog>
+
+    <script src="/app.js"></script>
+  </body>
+</html>
