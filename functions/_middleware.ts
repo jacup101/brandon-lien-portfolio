@@ -49,7 +49,7 @@ class MetaRewriter {
     }
 
     const property = element.getAttribute('property') || element.getAttribute('name');
-    const imageUrl = `${this.origin}${this.meta.image ?? '/assets/about-web/portrait-main.jpg'}`;
+    const imageUrl = `${this.origin}${this.meta.image ?? '/assets/about-web/preview-square.jpg'}`;
 
     switch (property) {
       case 'description':
