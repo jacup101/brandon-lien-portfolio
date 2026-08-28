@@ -220,16 +220,6 @@
     "featured": true
   },
   {
-    "id": "90-miles",
-    "title": "90 Miles",
-    "role": "Supervising Sound Editor",
-    "type": "Short",
-    "year": "",
-    "link": "#",
-    "imgPath": "/assets/film/web/90-miles.jpg",
-    "featured": true
-  },
-  {
     "id": "the-literary-work-of-imaginary-poets",
     "title": "The Literary Work of Imaginary Poets",
     "role": "Re-Recording Mixer",
@@ -237,6 +227,16 @@
     "year": "",
     "link": "#",
     "imgPath": "/assets/film/web/the-literary-work-of-imaginary-poets.jpg",
+    "featured": true
+  },
+  {
+    "id": "90-miles",
+    "title": "90 Miles",
+    "role": "Supervising Sound Editor",
+    "type": "Short",
+    "year": "",
+    "link": "#",
+    "imgPath": "/assets/film/web/90-miles.jpg",
     "featured": true
   },
   {
