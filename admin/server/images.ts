@@ -66,3 +66,20 @@ export async function compressAndSaveImage(
     .toFile(destAbsPath);
   unlinkSync(tempPath);
 }
+
+/**
+ * Same compression as compressAndSaveImage, but returns the bytes instead
+ * of writing a local file — used when the destination is a remote API
+ * (site-assets-backend's /assets endpoint) rather than this repo's
+ * public/ directory. The backend never does its own image processing
+ * (a Cloudflare Worker can't run sharp/libvips), so this admin tool still
+ * does the compression, just uploads the result instead of saving it here.
+ */
+export async function compressImageToBuffer(tempPath: string): Promise<Buffer> {
+  const buffer = await sharp(tempPath)
+    .resize({ width: MAX_WIDTH, withoutEnlargement: true })
+    .jpeg({ quality: JPEG_QUALITY, progressive: true, mozjpeg: true })
+    .toBuffer();
+  unlinkSync(tempPath);
+  return buffer;
+}

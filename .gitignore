@@ -16,6 +16,7 @@ dist-ssr
 .wrangler
 admin/tmp-uploads/*
 !admin/tmp-uploads/.gitkeep
+admin/.env.remote
 
 # Editor directories and files
 .vscode/*

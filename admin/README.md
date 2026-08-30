@@ -46,3 +46,39 @@ Then open one of the URLs it prints (defaults to port `4787`). Set
 `admin/` is not included in `tsconfig.app.json` or referenced by Vite's
 build graph (which starts from `index.html`/`src`), so nothing here can ever
 end up in `dist/` or the deployed site.
+
+## Remote backend integration (in progress)
+
+This tool is meant to eventually be replaced by
+[`site-assets-backend`](../../site-assets-backend) (a separate repo — a
+Cloudflare Worker + D1 + R2 backend, gated by Cloudflare Access). That
+migration is happening one collection at a time rather than all at once.
+
+Set `REMOTE_COLLECTIONS` to a comma-separated list of collection ids to
+route through the remote backend instead of the local JSON file + git
+commit — e.g. `REMOTE_COLLECTIONS=post-sound npm run admin`. Leave it unset
+(the default) and everything stays local, exactly as described above.
+
+Other env vars for remote mode:
+- `BACKEND_URL` — defaults to the deployed Worker
+  (`https://site-assets-backend.<subdomain>.workers.dev`); point it at
+  `http://127.0.0.1:8787` to test against a local `wrangler dev` instance
+  of that repo instead.
+- `BACKEND_SITE_ID` — defaults to `brandon-site`.
+- `BACKEND_ACCESS_CLIENT_ID` / `BACKEND_ACCESS_CLIENT_SECRET` — a
+  Cloudflare Access **Service Token** (create one in Zero Trust → Access →
+  Service Auth), needed once the deployed backend is actually gated by
+  Access. Without these set, requests to the *deployed* backend will get a
+  401 — which is why this hasn't been flipped on by default yet, and why
+  it was only verified tonight against a local test instance of the
+  backend, never the real deployed one.
+
+What changes in remote mode: images are still compressed locally (this
+tool's Node process can run `sharp`; the Worker can't), then uploaded to
+the backend's `/assets` endpoint instead of saved into `public/assets/`.
+Entries live in the backend's D1 database instead of this repo's JSON
+files, so **remote-mode saves are not git commits** — the response's `git`
+field is simply `null`. Only `post-sound` has this wired up so far;
+`admin/server/remoteRoutes.ts` mirrors the same request/response shape as
+the local router, so the same pattern extends to film/music/about without
+any admin/public/*.js changes once it's worth doing.
