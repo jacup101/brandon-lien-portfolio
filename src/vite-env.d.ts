@@ -3,6 +3,8 @@
 interface ImportMetaEnv {
   readonly VITE_BYPASS_TURNSTILE?: string;
   readonly VITE_TURNSTILE_SITE_KEY?: string;
+  readonly VITE_BACKEND_URL?: string;
+  readonly VITE_BACKEND_SITE_ID?: string;
 }
 
 interface ImportMeta {

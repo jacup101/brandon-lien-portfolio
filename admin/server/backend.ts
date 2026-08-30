@@ -45,11 +45,24 @@ export interface RemoteEntry {
 }
 
 export function listEntries(collectionId: string): Promise<RemoteEntry[]> {
-  return request(`/api/sites/${SITE_ID}/collections/${collectionId}/entries`);
+  return listEntriesForSite(SITE_ID, collectionId);
+}
+
+export function listEntriesForSite(siteId: string, collectionId: string): Promise<RemoteEntry[]> {
+  return request(`/api/sites/${siteId}/collections/${collectionId}/entries`);
 }
 
 export function createEntry(collectionId: string, slug: string, data: Record<string, unknown>): Promise<RemoteEntry> {
-  return request(`/api/sites/${SITE_ID}/collections/${collectionId}/entries`, {
+  return createEntryForSite(SITE_ID, collectionId, slug, data);
+}
+
+export function createEntryForSite(
+  siteId: string,
+  collectionId: string,
+  slug: string,
+  data: Record<string, unknown>
+): Promise<RemoteEntry> {
+  return request(`/api/sites/${siteId}/collections/${collectionId}/entries`, {
     method: 'POST',
     headers: { 'Content-Type': 'application/json' },
     body: JSON.stringify({ slug, data }),
