@@ -1,5 +1,6 @@
-import { FormEvent, useCallback, useEffect, useState } from 'react';
+import { FormEvent, useCallback, useEffect, useRef, useState } from 'react';
 import * as adminApi from '../lib/adminApi';
+import { AdminApiError } from '../lib/adminApi';
 import { publicAssetUrl } from '../lib/backendApi';
 import { compressImage } from '../lib/compressImage';
 import './AdminPage.css';
@@ -40,8 +41,57 @@ function slugify(value: string): string {
 }
 
 const EMPTY_FORM = { title: '', role: '', type: 'Short', year: '', link: '', featured: true };
+const GOOGLE_SCRIPT_ID = 'google-identity-script';
+const TOKEN_STORAGE_KEY = 'admin-google-id-token';
+const GOOGLE_CLIENT_ID = import.meta.env.VITE_GOOGLE_CLIENT_ID;
+
+// Google's own "Sign in with Google" widget, loaded the same way this
+// project already loads Cloudflare Turnstile (see AboutPage.tsx): inject
+// the script once, render the button once it's ready. The token it hands
+// back is sent straight to site-assets-backend as a Bearer header — no
+// proxy, no server-side piece on this site at all.
+function useGoogleSignIn(onToken: (token: string) => void) {
+  const buttonRef = useRef<HTMLDivElement>(null);
+
+  useEffect(() => {
+    if (!GOOGLE_CLIENT_ID) return;
+
+    const renderButton = () => {
+      if (!window.google || !buttonRef.current) return;
+      window.google.accounts.id.initialize({
+        client_id: GOOGLE_CLIENT_ID,
+        callback: (response) => onToken(response.credential),
+      });
+      window.google.accounts.id.renderButton(buttonRef.current, { theme: 'outline', size: 'large' });
+    };
+
+    if (window.google) {
+      renderButton();
+      return;
+    }
+
+    const existingScript = document.getElementById(GOOGLE_SCRIPT_ID) as HTMLScriptElement | null;
+    if (existingScript) {
+      existingScript.addEventListener('load', renderButton);
+      return () => existingScript.removeEventListener('load', renderButton);
+    }
+
+    const script = document.createElement('script');
+    script.id = GOOGLE_SCRIPT_ID;
+    script.src = 'https://accounts.google.com/gsi/client';
+    script.async = true;
+    script.defer = true;
+    script.addEventListener('load', renderButton);
+    document.head.appendChild(script);
+
+    return () => script.removeEventListener('load', renderButton);
+  }, [onToken]);
+
+  return buttonRef;
+}
 
 function AdminPage() {
+  const [token, setToken] = useState<string | null>(() => sessionStorage.getItem(TOKEN_STORAGE_KEY));
   const [entries, setEntries] = useState<PostSoundEntry[] | null>(null);
   const [loadError, setLoadError] = useState('');
   const [status, setStatus] = useState<{ message: string; error?: boolean } | null>(null);
@@ -54,18 +104,49 @@ function AdminPage() {
   const [orderDirty, setOrderDirty] = useState(false);
   const [draggedSlug, setDraggedSlug] = useState<string | null>(null);
 
-  const load = useCallback(async () => {
-    try {
-      const remote = await adminApi.listEntries('post-sound');
-      setEntries(remote.map(toFlat));
-    } catch (err) {
-      setLoadError((err as Error).message);
-    }
+  const handleToken = useCallback((newToken: string) => {
+    sessionStorage.setItem(TOKEN_STORAGE_KEY, newToken);
+    setToken(newToken);
   }, []);
 
+  const signInButtonRef = useGoogleSignIn(handleToken);
+
+  const signOut = useCallback(() => {
+    sessionStorage.removeItem(TOKEN_STORAGE_KEY);
+    window.google?.accounts.id.disableAutoSelect();
+    setToken(null);
+    setEntries(null);
+  }, []);
+
+  // Any call that comes back 401/403 means the token expired or was
+  // rejected — drop it and send the person back to the sign-in screen
+  // rather than showing a confusing error inline.
+  const handleApiError = useCallback(
+    (err: unknown) => {
+      if (err instanceof AdminApiError && (err.status === 401 || err.status === 403)) {
+        signOut();
+        return 'Your session expired. Please sign in again.';
+      }
+      return (err as Error).message;
+    },
+    [signOut]
+  );
+
+  const load = useCallback(
+    async (activeToken: string) => {
+      try {
+        const remote = await adminApi.listEntries('post-sound', activeToken);
+        setEntries(remote.map(toFlat));
+      } catch (err) {
+        setLoadError(handleApiError(err));
+      }
+    },
+    [handleApiError]
+  );
+
   useEffect(() => {
-    load();
-  }, [load]);
+    if (token) load(token);
+  }, [token, load]);
 
   function openAdd() {
     setEditingSlug(null);
@@ -93,6 +174,7 @@ function AdminPage() {
   async function handleSubmit(e: FormEvent) {
     e.preventDefault();
     setFormError('');
+    if (!token) return;
 
     if (!form.title.trim() || !form.role.trim()) {
       setFormError('Title and role are required.');
@@ -118,36 +200,36 @@ function AdminPage() {
 
       if (imageFile) {
         const compressed = await compressImage(imageFile);
-        const asset = await adminApi.uploadAsset(compressed, `${slug}.jpg`);
+        const asset = await adminApi.uploadAsset(compressed, `${slug}.jpg`, token);
         data.imgPath = asset.r2Key;
       } else if (editingSlug) {
         data.imgPath = entries?.find((e) => e.slug === editingSlug)?.imgPath ?? '';
       }
 
       if (editingSlug) {
-        await adminApi.updateEntry('post-sound', editingSlug, data);
+        await adminApi.updateEntry('post-sound', editingSlug, data, token);
       } else {
-        await adminApi.createEntry('post-sound', slug, data);
+        await adminApi.createEntry('post-sound', slug, data, token);
       }
 
       setDialogOpen(false);
       setStatus({ message: `Saved "${form.title}".` });
-      await load();
+      await load(token);
     } catch (err) {
-      setFormError((err as Error).message);
+      setFormError(handleApiError(err));
     } finally {
       setSaving(false);
     }
   }
 
   async function handleDelete(entry: PostSoundEntry) {
-    if (!confirm(`Delete "${entry.title}"? This cannot be undone.`)) return;
+    if (!token || !confirm(`Delete "${entry.title}"? This cannot be undone.`)) return;
     try {
-      await adminApi.deleteEntry('post-sound', entry.slug);
+      await adminApi.deleteEntry('post-sound', entry.slug, token);
       setStatus({ message: `Removed "${entry.title}".` });
-      await load();
+      await load(token);
     } catch (err) {
-      setStatus({ message: (err as Error).message, error: true });
+      setStatus({ message: handleApiError(err), error: true });
     }
   }
 
@@ -163,17 +245,38 @@ function AdminPage() {
   }
 
   async function saveOrder() {
-    if (!entries) return;
+    if (!entries || !token) return;
     try {
       await adminApi.reorderEntries(
         'post-sound',
-        entries.map((e) => e.slug)
+        entries.map((e) => e.slug),
+        token
       );
       setOrderDirty(false);
       setStatus({ message: 'Order saved.' });
     } catch (err) {
-      setStatus({ message: (err as Error).message, error: true });
+      setStatus({ message: handleApiError(err), error: true });
     }
+  }
+
+  if (!GOOGLE_CLIENT_ID) {
+    return (
+      <main className="admin-page">
+        <p className="admin-status admin-status-error">
+          Admin sign-in isn't configured — VITE_GOOGLE_CLIENT_ID is missing.
+        </p>
+      </main>
+    );
+  }
+
+  if (!token) {
+    return (
+      <main className="admin-page admin-page-signin">
+        <h1>Post-Sound Admin</h1>
+        <p className="admin-page-subtitle">Sign in with an allowlisted Google account to continue.</p>
+        <div ref={signInButtonRef} />
+      </main>
+    );
   }
 
   if (loadError) {
@@ -199,11 +302,16 @@ function AdminPage() {
           <h1>Post-Sound Admin</h1>
           <p className="admin-page-subtitle">Editing live production content on brandonlien.com.</p>
         </div>
-        {orderDirty && (
-          <button type="button" className="admin-btn admin-btn-secondary" onClick={saveOrder}>
-            Save Order
+        <div className="admin-header-actions">
+          {orderDirty && (
+            <button type="button" className="admin-btn admin-btn-secondary" onClick={saveOrder}>
+              Save Order
+            </button>
+          )}
+          <button type="button" className="admin-btn admin-btn-secondary" onClick={signOut}>
+            Sign Out
           </button>
-        )}
+        </div>
       </header>
 
       {status && <p className={`admin-status ${status.error ? 'admin-status-error' : ''}`}>{status.message}</p>}

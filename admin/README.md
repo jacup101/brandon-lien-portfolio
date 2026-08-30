@@ -65,13 +65,12 @@ Other env vars for remote mode:
   `http://127.0.0.1:8787` to test against a local `wrangler dev` instance
   of that repo instead.
 - `BACKEND_SITE_ID` — defaults to `brandon-site`.
-- `BACKEND_ACCESS_CLIENT_ID` / `BACKEND_ACCESS_CLIENT_SECRET` — a
-  Cloudflare Access **Service Token** (create one in Zero Trust → Access →
-  Service Auth), needed once the deployed backend is actually gated by
-  Access. Without these set, requests to the *deployed* backend will get a
-  401 — which is why this hasn't been flipped on by default yet, and why
-  it was only verified tonight against a local test instance of the
-  backend, never the real deployed one.
+- `BACKEND_API_KEY` — a shared secret this script sends as a Bearer token.
+  This tool has no browser, so it can't do the "sign in with Google" flow
+  the hosted admin UI uses; the backend's auth middleware accepts this
+  static key as an alternative. Must match the `ADMIN_API_KEY` secret set
+  on the deployed backend (`wrangler secret put ADMIN_API_KEY`). Without
+  this set, requests to the deployed backend will get a 401.
 
 What changes in remote mode: images are still compressed locally (this
 tool's Node process can run `sharp`; the Worker can't), then uploaded to

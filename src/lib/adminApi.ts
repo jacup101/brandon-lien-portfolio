@@ -1,14 +1,31 @@
-// Client for the hosted admin UI — talks to /admin/api/* (this site's own
-// Pages Function proxy, see functions/admin/api/[[path]].ts), never to
-// site-assets-backend directly. Same-origin, so no CORS/cookie concerns;
-// the proxy attaches the real backend credentials server-side.
+// Client for the hosted admin UI — calls site-assets-backend's real API
+// directly from the browser (no proxy). Authenticates with a Google ID
+// token obtained via the "Sign in with Google" widget (see useGoogleSignIn
+// in AdminPage.tsx), sent as a plain Bearer token; the backend verifies it
+// itself against Google's own keys.
+const BACKEND_URL = import.meta.env.VITE_BACKEND_URL || 'https://site-assets-backend.jacup105.workers.dev';
 const SITE_ID = import.meta.env.VITE_BACKEND_SITE_ID || 'brandon-site';
 
-async function request<T>(path: string, init?: RequestInit): Promise<T> {
-  const res = await fetch(`/admin/api${path}`, init);
+export class AdminApiError extends Error {
+  status: number;
+  constructor(message: string, status: number) {
+    super(message);
+    this.status = status;
+  }
+}
+
+async function request<T>(path: string, token: string, init: RequestInit = {}): Promise<T> {
+  const res = await fetch(`${BACKEND_URL}${path}`, {
+    ...init,
+    headers: {
+      ...(init.headers as Record<string, string> | undefined),
+      Authorization: `Bearer ${token}`,
+    },
+  });
   const body = await res.json().catch(() => ({}));
   if (!res.ok) {
-    throw new Error((body as { error?: string }).error || `Request failed (${res.status})`);
+    const message = (body as { error?: string }).error || `Request failed (${res.status})`;
+    throw new AdminApiError(message, res.status);
   }
   return body as T;
 }
@@ -19,34 +36,44 @@ export interface RemoteEntry {
   updatedAt: number;
 }
 
-export function listEntries(collectionId: string): Promise<RemoteEntry[]> {
-  return request(`/sites/${SITE_ID}/collections/${collectionId}/entries`);
+export function listEntries(collectionId: string, token: string): Promise<RemoteEntry[]> {
+  return request(`/api/sites/${SITE_ID}/collections/${collectionId}/entries`, token);
 }
 
-export function createEntry(collectionId: string, slug: string, data: Record<string, unknown>): Promise<RemoteEntry> {
-  return request(`/sites/${SITE_ID}/collections/${collectionId}/entries`, {
+export function createEntry(
+  collectionId: string,
+  slug: string,
+  data: Record<string, unknown>,
+  token: string
+): Promise<RemoteEntry> {
+  return request(`/api/sites/${SITE_ID}/collections/${collectionId}/entries`, token, {
     method: 'POST',
     headers: { 'Content-Type': 'application/json' },
     body: JSON.stringify({ slug, data }),
   });
 }
 
-export function updateEntry(collectionId: string, slug: string, data: Record<string, unknown>): Promise<RemoteEntry> {
-  return request(`/sites/${SITE_ID}/collections/${collectionId}/entries/${encodeURIComponent(slug)}`, {
+export function updateEntry(
+  collectionId: string,
+  slug: string,
+  data: Record<string, unknown>,
+  token: string
+): Promise<RemoteEntry> {
+  return request(`/api/sites/${SITE_ID}/collections/${collectionId}/entries/${encodeURIComponent(slug)}`, token, {
     method: 'PUT',
     headers: { 'Content-Type': 'application/json' },
     body: JSON.stringify({ data }),
   });
 }
 
-export function deleteEntry(collectionId: string, slug: string): Promise<{ ok: true }> {
-  return request(`/sites/${SITE_ID}/collections/${collectionId}/entries/${encodeURIComponent(slug)}`, {
+export function deleteEntry(collectionId: string, slug: string, token: string): Promise<{ ok: true }> {
+  return request(`/api/sites/${SITE_ID}/collections/${collectionId}/entries/${encodeURIComponent(slug)}`, token, {
     method: 'DELETE',
   });
 }
 
-export function reorderEntries(collectionId: string, order: string[]): Promise<RemoteEntry[]> {
-  return request(`/sites/${SITE_ID}/collections/${collectionId}/entries/reorder`, {
+export function reorderEntries(collectionId: string, order: string[], token: string): Promise<RemoteEntry[]> {
+  return request(`/api/sites/${SITE_ID}/collections/${collectionId}/entries/reorder`, token, {
     method: 'PUT',
     headers: { 'Content-Type': 'application/json' },
     body: JSON.stringify({ order }),
@@ -59,8 +86,8 @@ export interface UploadedAsset {
   contentType: string;
 }
 
-export async function uploadAsset(blob: Blob, filename: string): Promise<UploadedAsset> {
+export async function uploadAsset(blob: Blob, filename: string, token: string): Promise<UploadedAsset> {
   const form = new FormData();
   form.append('file', blob, filename);
-  return request(`/sites/${SITE_ID}/assets`, { method: 'POST', body: form });
+  return request(`/api/sites/${SITE_ID}/assets`, token, { method: 'POST', body: form });
 }
