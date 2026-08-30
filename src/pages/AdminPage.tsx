@@ -419,7 +419,7 @@ function AdminPage() {
 
             <label>
               Link
-              <input type="url" value={form.link} onChange={(e) => setForm({ ...form, link: e.target.value })} />
+              <input type="text" value={form.link} onChange={(e) => setForm({ ...form, link: e.target.value })} />
             </label>
 
             <label className="admin-checkbox-label">
