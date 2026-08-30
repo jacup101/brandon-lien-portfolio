@@ -15,13 +15,22 @@ export class AdminApiError extends Error {
 }
 
 async function request<T>(path: string, token: string, init: RequestInit = {}): Promise<T> {
-  const res = await fetch(`${BACKEND_URL}${path}`, {
-    ...init,
-    headers: {
-      ...(init.headers as Record<string, string> | undefined),
-      Authorization: `Bearer ${token}`,
-    },
-  });
+  let res: Response;
+  try {
+    res = await fetch(`${BACKEND_URL}${path}`, {
+      ...init,
+      headers: {
+        ...(init.headers as Record<string, string> | undefined),
+        Authorization: `Bearer ${token}`,
+      },
+    });
+  } catch {
+    // fetch() throws for network failures, DNS errors, and CORS
+    // rejections alike — none of those are the backend's own 401/403,
+    // so status 0 keeps this out of the "session expired" handling.
+    throw new AdminApiError('Could not reach the backend. Check your connection and try again.', 0);
+  }
+
   const body = await res.json().catch(() => ({}));
   if (!res.ok) {
     const message = (body as { error?: string }).error || `Request failed (${res.status})`;

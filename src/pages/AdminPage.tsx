@@ -52,6 +52,7 @@ const GOOGLE_CLIENT_ID = import.meta.env.VITE_GOOGLE_CLIENT_ID;
 // proxy, no server-side piece on this site at all.
 function useGoogleSignIn(onToken: (token: string) => void) {
   const buttonRef = useRef<HTMLDivElement>(null);
+  const [scriptError, setScriptError] = useState(false);
 
   useEffect(() => {
     if (!GOOGLE_CLIENT_ID) return;
@@ -82,16 +83,24 @@ function useGoogleSignIn(onToken: (token: string) => void) {
     script.async = true;
     script.defer = true;
     script.addEventListener('load', renderButton);
+    // A blocked or failed request (ad blocker, offline, network filter)
+    // never fires 'load' — without this, the page would just sit there
+    // with no button and no explanation.
+    script.addEventListener('error', () => setScriptError(true));
     document.head.appendChild(script);
 
-    return () => script.removeEventListener('load', renderButton);
+    return () => {
+      script.removeEventListener('load', renderButton);
+      script.removeEventListener('error', () => setScriptError(true));
+    };
   }, [onToken]);
 
-  return buttonRef;
+  return { buttonRef, scriptError };
 }
 
 function AdminPage() {
   const [token, setToken] = useState<string | null>(() => sessionStorage.getItem(TOKEN_STORAGE_KEY));
+  const [signInNotice, setSignInNotice] = useState('');
   const [entries, setEntries] = useState<PostSoundEntry[] | null>(null);
   const [loadError, setLoadError] = useState('');
   const [status, setStatus] = useState<{ message: string; error?: boolean } | null>(null);
@@ -109,23 +118,27 @@ function AdminPage() {
     setToken(newToken);
   }, []);
 
-  const signInButtonRef = useGoogleSignIn(handleToken);
+  const { buttonRef: signInButtonRef, scriptError: signInScriptError } = useGoogleSignIn(handleToken);
 
-  const signOut = useCallback(() => {
+  const signOut = useCallback((notice?: string) => {
     sessionStorage.removeItem(TOKEN_STORAGE_KEY);
     window.google?.accounts.id.disableAutoSelect();
     setToken(null);
     setEntries(null);
+    setLoadError('');
+    setSignInNotice(notice ?? '');
   }, []);
 
   // Any call that comes back 401/403 means the token expired or was
   // rejected — drop it and send the person back to the sign-in screen
-  // rather than showing a confusing error inline.
+  // (with an explanation) rather than showing a confusing error inline.
+  // Anything else (network failure, 5xx) is left on screen for a retry,
+  // since signing out again wouldn't fix it.
   const handleApiError = useCallback(
     (err: unknown) => {
       if (err instanceof AdminApiError && (err.status === 401 || err.status === 403)) {
-        signOut();
-        return 'Your session expired. Please sign in again.';
+        signOut('Your session expired. Please sign in again.');
+        return '';
       }
       return (err as Error).message;
     },
@@ -274,7 +287,14 @@ function AdminPage() {
       <main className="admin-page admin-page-signin">
         <h1>Post-Sound Admin</h1>
         <p className="admin-page-subtitle">Sign in with an allowlisted Google account to continue.</p>
-        <div ref={signInButtonRef} />
+        {signInNotice && <p className="admin-status admin-status-error">{signInNotice}</p>}
+        {signInScriptError ? (
+          <p className="admin-status admin-status-error">
+            Couldn't load Google's sign-in script. Check your connection or ad blocker, then reload the page.
+          </p>
+        ) : (
+          <div ref={signInButtonRef} />
+        )}
       </main>
     );
   }
@@ -283,6 +303,14 @@ function AdminPage() {
     return (
       <main className="admin-page">
         <p className="admin-status admin-status-error">{loadError}</p>
+        <div className="admin-header-actions">
+          <button type="button" className="admin-btn admin-btn-secondary" onClick={() => load(token)}>
+            Retry
+          </button>
+          <button type="button" className="admin-btn admin-btn-secondary" onClick={() => signOut()}>
+            Sign Out
+          </button>
+        </div>
       </main>
     );
   }
@@ -308,7 +336,7 @@ function AdminPage() {
               Save Order
             </button>
           )}
-          <button type="button" className="admin-btn admin-btn-secondary" onClick={signOut}>
+          <button type="button" className="admin-btn admin-btn-secondary" onClick={() => signOut()}>
             Sign Out
           </button>
         </div>
