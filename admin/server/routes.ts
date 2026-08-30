@@ -6,19 +6,7 @@ import { COLLECTIONS, getCollection } from './collections.ts';
 import type { CollectionConfig, FieldSchema } from './collections.ts';
 import { stageAndCommit } from './git.ts';
 import { absoluteImagePath, compressAndSaveImage, resolveImagePath, slugify } from './images.ts';
-import { createRemoteCollectionRouter } from './remoteRoutes.ts';
 import { REPO_ROOT, loadJson, saveJson } from './store.ts';
-
-// Collections listed here (comma-separated) are served from
-// site-assets-backend instead of the local JSON file + git commit — e.g.
-// REMOTE_COLLECTIONS=post-sound. Empty/unset means everything stays local,
-// which is the safe default until a collection's remote wiring is verified.
-const REMOTE_COLLECTIONS = new Set(
-  (process.env.REMOTE_COLLECTIONS ?? '')
-    .split(',')
-    .map((id) => id.trim())
-    .filter(Boolean)
-);
 
 type Entry = Record<string, unknown>;
 
@@ -226,10 +214,7 @@ router.get('/collections', (_req, res) => {
 });
 
 for (const config of COLLECTIONS) {
-  const collectionRouter = REMOTE_COLLECTIONS.has(config.id)
-    ? createRemoteCollectionRouter(config)
-    : createCollectionRouter(config);
-  router.use(`/collections/${config.id}`, collectionRouter);
+  router.use(`/collections/${config.id}`, createCollectionRouter(config));
 }
 
 router.use((req, res, next) => {

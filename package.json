@@ -9,8 +9,7 @@
     "dev:pages": "npm run build && npx wrangler pages dev dist --compatibility-date 2024-09-23 --persist-to /tmp/brandon-site-wrangler-state",
     "lint": "eslint .",
     "preview": "vite preview",
-    "admin": "tsx admin/server/index.ts",
-    "admin:remote": "tsx --env-file=admin/.env.remote admin/server/index.ts"
+    "admin": "tsx admin/server/index.ts"
   },
   "dependencies": {
     "bootstrap": "^5.3.3",

@@ -47,37 +47,18 @@ Then open one of the URLs it prints (defaults to port `4787`). Set
 build graph (which starts from `index.html`/`src`), so nothing here can ever
 end up in `dist/` or the deployed site.
 
-## Remote backend integration (in progress)
+## Relationship to site-assets-backend
 
-This tool is meant to eventually be replaced by
+`post-sound` used to be editable here in a "remote mode" that talked to
 [`site-assets-backend`](../../site-assets-backend) (a separate repo — a
-Cloudflare Worker + D1 + R2 backend, gated by Cloudflare Access). That
-migration is happening one collection at a time rather than all at once.
+Cloudflare Worker + D1 + R2 backend). That's been retired: post-sound is
+now edited exclusively through the hosted `/admin` page on the live site
+(`src/pages/AdminPage.tsx`), which authenticates with a real "Sign in
+with Google" flow. Giving this local script its own way to reach the
+backend would have meant a second, weaker credential (a static shared
+secret) doing the same job the hosted page already does properly — not
+worth it once the hosted page existed.
 
-Set `REMOTE_COLLECTIONS` to a comma-separated list of collection ids to
-route through the remote backend instead of the local JSON file + git
-commit — e.g. `REMOTE_COLLECTIONS=post-sound npm run admin`. Leave it unset
-(the default) and everything stays local, exactly as described above.
-
-Other env vars for remote mode:
-- `BACKEND_URL` — defaults to the deployed Worker
-  (`https://site-assets-backend.<subdomain>.workers.dev`); point it at
-  `http://127.0.0.1:8787` to test against a local `wrangler dev` instance
-  of that repo instead.
-- `BACKEND_SITE_ID` — defaults to `brandon-site`.
-- `BACKEND_API_KEY` — a shared secret this script sends as a Bearer token.
-  This tool has no browser, so it can't do the "sign in with Google" flow
-  the hosted admin UI uses; the backend's auth middleware accepts this
-  static key as an alternative. Must match the `ADMIN_API_KEY` secret set
-  on the deployed backend (`wrangler secret put ADMIN_API_KEY`). Without
-  this set, requests to the deployed backend will get a 401.
-
-What changes in remote mode: images are still compressed locally (this
-tool's Node process can run `sharp`; the Worker can't), then uploaded to
-the backend's `/assets` endpoint instead of saved into `public/assets/`.
-Entries live in the backend's D1 database instead of this repo's JSON
-files, so **remote-mode saves are not git commits** — the response's `git`
-field is simply `null`. Only `post-sound` has this wired up so far;
-`admin/server/remoteRoutes.ts` mirrors the same request/response shape as
-the local router, so the same pattern extends to film/music/about without
-any admin/public/*.js changes once it's worth doing.
+This tool now only ever edits local JSON files + git commits, for
+film/music/about, exactly as described above. It has no path to the
+deployed backend at all anymore.

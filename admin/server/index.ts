@@ -3,7 +3,6 @@ import path from 'node:path';
 import { fileURLToPath } from 'node:url';
 import express from 'express';
 import { aboutRouter } from './about.ts';
-import { fetchAsset } from './backend.ts';
 import { router } from './routes.ts';
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
@@ -27,31 +26,6 @@ app.use(express.json());
 app.use('/api/about', aboutRouter);
 app.use('/api', router);
 app.use('/site-assets', express.static(path.join(__dirname, '../../public')));
-
-// Proxies an image out of site-assets-backend's R2 bucket for remote-mode
-// collections — those store an R2 key (e.g. "brandon-site/<uuid>.jpg") in
-// place of a local /assets/... path, and there's nothing under public/ to
-// serve directly. Auth stays server-side here (Service Token), so the
-// browser never needs Access credentials of its own.
-app.get('/remote-image', async (req, res) => {
-  const key = String(req.query.key ?? '');
-  if (!key) {
-    res.status(400).json({ error: 'key is required.' });
-    return;
-  }
-  try {
-    const upstream = await fetchAsset(key);
-    if (!upstream.ok) {
-      res.status(upstream.status).end();
-      return;
-    }
-    res.setHeader('Content-Type', upstream.headers.get('content-type') ?? 'application/octet-stream');
-    res.setHeader('Cache-Control', 'private, max-age=31536000, immutable');
-    res.send(Buffer.from(await upstream.arrayBuffer()));
-  } catch (err) {
-    res.status(502).json({ error: (err as Error).message });
-  }
-});
 
 app.use(express.static(path.join(__dirname, '../public')));
 

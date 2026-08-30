@@ -99,16 +99,9 @@ async function loadEntries() {
   render();
 }
 
-// Local-mode images are a path under public/ (always starts with "/").
-// Remote-mode images are an R2 key (e.g. "brandon-site/<uuid>.jpg", no
-// leading slash) and need to go through the /remote-image proxy instead,
-// since there's no local file to serve directly.
 function resolveImageUrl(imgPath, updatedAt) {
   if (!imgPath) return null;
-  const v = updatedAt || 0;
-  return imgPath.startsWith('/')
-    ? `/site-assets${imgPath}?v=${v}`
-    : `/remote-image?key=${encodeURIComponent(imgPath)}&v=${v}`;
+  return `/site-assets${imgPath}?v=${updatedAt || 0}`;
 }
 
 function cardImageSrc(config, entry) {
