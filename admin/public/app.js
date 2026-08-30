@@ -99,10 +99,21 @@ async function loadEntries() {
   render();
 }
 
+// Local-mode images are a path under public/ (always starts with "/").
+// Remote-mode images are an R2 key (e.g. "brandon-site/<uuid>.jpg", no
+// leading slash) and need to go through the /remote-image proxy instead,
+// since there's no local file to serve directly.
+function resolveImageUrl(imgPath, updatedAt) {
+  if (!imgPath) return null;
+  const v = updatedAt || 0;
+  return imgPath.startsWith('/')
+    ? `/site-assets${imgPath}?v=${v}`
+    : `/remote-image?key=${encodeURIComponent(imgPath)}&v=${v}`;
+}
+
 function cardImageSrc(config, entry) {
   if (!config.primaryImage) return null;
-  const imgPath = entry[config.primaryImage.key];
-  return imgPath ? `/site-assets${imgPath}?v=${entry.updatedAt || 0}` : null;
+  return resolveImageUrl(entry[config.primaryImage.key], entry.updatedAt);
 }
 
 function cardSubtitle(entry) {
@@ -236,7 +247,7 @@ function setupImageField(config, entry) {
 
   const currentPath = entry ? entry[config.primaryImage.key] : '';
   if (currentPath) {
-    currentImagePreview.src = `/site-assets${currentPath}?v=${entry.updatedAt || 0}`;
+    currentImagePreview.src = resolveImageUrl(currentPath, entry.updatedAt);
     currentImagePreview.hidden = false;
   } else {
     currentImagePreview.hidden = true;

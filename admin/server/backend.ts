@@ -92,3 +92,18 @@ export async function uploadAsset(buffer: Buffer, filename: string, contentType:
     body: form,
   });
 }
+
+/**
+ * Fetches an uploaded image's raw bytes for proxying to the browser.
+ * `r2Key` is the value stored in an entry's image field, e.g.
+ * "brandon-site/<uuid>.jpg" — the site id prefix is parsed back out so
+ * this works regardless of which site the key belongs to.
+ */
+export async function fetchAsset(r2Key: string): Promise<Response> {
+  const slashIndex = r2Key.indexOf('/');
+  const siteId = slashIndex === -1 ? SITE_ID : r2Key.slice(0, slashIndex);
+  const filename = slashIndex === -1 ? r2Key : r2Key.slice(slashIndex + 1);
+  return fetch(`${BACKEND_URL}/api/sites/${siteId}/assets/${filename}`, {
+    headers: authHeaders(),
+  });
+}
