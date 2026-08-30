@@ -1,6 +1,7 @@
 import { FormEvent, useEffect, useId, useRef, useState } from 'react';
 import { Button, Col, Container, Form, Row } from 'react-bootstrap';
 import SocialLinks from '../components/social/SocialLinks';
+import ABOUT_CONTENT from '../data/aboutContent.json';
 import './AboutPage.css';
 
 type FormStatus = 'idle' | 'submitting' | 'success' | 'error';
@@ -164,40 +165,9 @@ function AboutPage() {
         <section className="about-hero">
           <div className="about-hero-copy">
             <div className="about-copy-grid about-copy-grid-hero">
-              <p>
-                My name is Brandon Lien, and I&apos;m a Vietnamese and Teochew American
-                artist from Los Angeles, CA. My personal philosophy is to stay adaptable
-                and be willing to learn from any discipline. All of my interests,
-                experiences, and work are a part of who I am professionally and
-                artistically.
-              </p>
-
-              <p>
-                I am a sound artist with a wide array of experience, from sound design,
-                mixing in stereo and 5.1 surround, dialogue editing, sound effects
-                editing, foley, field recording, audio restoration, and file delivery. I
-                take pride in being a trusted collaborator that can ideate creative and
-                technical solutions to challenges.
-              </p>
-
-              <p>
-                I started my career in post-production sound with internships at Formosa
-                Group and Enhanced Media. Since then, my work has screened at numerous
-                film festivals, theaters, and streaming services like Amazon Prime,
-                Lifetime, and Tubi.
-              </p>
-
-              <p>
-                In other areas of filmmaking, I have experience doing video editing,
-                directing, and cinematography. As a musician, I have released two albums
-                (with one more on the way) and have worked on multiple collaborations.
-              </p>
-
-              <p>
-                This website serves as a portfolio, a journal, a love letter, and a
-                representation of the multitudes of things that make up who I am. Thanks
-                for visiting.
-              </p>
+              {ABOUT_CONTENT.bioParagraphs.map((paragraph) => (
+                <p key={paragraph}>{paragraph}</p>
+              ))}
             </div>
           </div>
 
@@ -205,7 +175,7 @@ function AboutPage() {
             <div className="about-portrait-frame">
               <img
                 className="about-portrait"
-                src="/assets/about-web/portrait-main.jpg"
+                src={ABOUT_CONTENT.portraitImage}
                 alt="Portrait of Brandon Lien"
                 loading="eager"
                 decoding="async"
@@ -213,45 +183,24 @@ function AboutPage() {
               />
             </div>
 
-            <SocialLinks links={[
-              { href: 'https://www.instagram.com/brandonlien_/', ariaLabel: 'Instagram', iconClass: 'social-link-icon-instagram' },
-              { href: 'https://www.imdb.com/name/nm11744121', ariaLabel: 'IMDb', iconClass: 'social-link-icon-imdb' },
-              { href: 'https://www.youtube.com/channel/UCNZ_oSPzSEylE4HNqm6EoHg', ariaLabel: 'YouTube', iconClass: 'social-link-icon-youtube' },
-              { href: 'https://brandonlien.bandcamp.com/', ariaLabel: 'Bandcamp', iconClass: 'social-link-icon-bandcamp' },
-            ]} />
+            <SocialLinks links={ABOUT_CONTENT.socialLinks} />
           </div>
         </section>
 
         <Row className="justify-content-center">
           <Col xl={10}>
             <section className="about-image-strip about-section" aria-label="Additional portraits">
-              <div className="about-strip-image-frame">
-                <img
-                  src="/assets/about-web/banner-3.jpg"
-                  alt="Brandon Lien portrait"
-                  className="about-strip-image"
-                  loading="lazy"
-                  decoding="async"
-                />
-              </div>
-              <div className="about-strip-image-frame">
-                <img
-                  src="/assets/about-web/banner-2.jpg"
-                  alt="Brandon Lien portrait"
-                  className="about-strip-image"
-                  loading="lazy"
-                  decoding="async"
-                />
-              </div>
-              <div className="about-strip-image-frame">
-                <img
-                  src="/assets/about-web/new-portrait.jpg"
-                  alt="Brandon Lien portrait"
-                  className="about-strip-image about-strip-image-top"
-                  loading="lazy"
-                  decoding="async"
-                />
-              </div>
+              {ABOUT_CONTENT.stripImages.map((image) => (
+                <div key={image.path} className="about-strip-image-frame">
+                  <img
+                    src={image.path}
+                    alt="Brandon Lien portrait"
+                    className={`about-strip-image${image.cropTop ? ' about-strip-image-top' : ''}`}
+                    loading="lazy"
+                    decoding="async"
+                  />
+                </div>
+              ))}
             </section>
 
             <section className="about-section about-contact-section">

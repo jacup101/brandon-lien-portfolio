@@ -2,16 +2,15 @@
 <html lang="en">
   <head>
     <meta charset="utf-8" />
-    <title>Post-Sound Admin</title>
+    <title>Site Admin</title>
     <link rel="stylesheet" href="/styles.css" />
   </head>
   <body class="app-root">
     <header class="topbar">
       <div>
-        <h1>Post-Sound Credits</h1>
-        <p class="subtitle">
-          This mirrors the live <code>/post-sound</code> gallery. Drag cards to reorder, hover for
-          edit/delete. Local-only — changes commit to git automatically, but never push.
+        <h1 id="page-title">Post-Sound Credits</h1>
+        <p class="subtitle" id="page-subtitle">
+          Local-only — changes commit to git automatically, but never push.
         </p>
       </div>
       <div class="topbar-actions">
@@ -19,58 +18,63 @@
       </div>
     </header>
 
+    <nav class="admin-tabs" aria-label="Admin sections">
+      <button type="button" class="admin-tab" data-tab="post-sound">Post-Sound</button>
+      <button type="button" class="admin-tab" data-tab="film">Film</button>
+      <button type="button" class="admin-tab" data-tab="music">Music</button>
+      <button type="button" class="admin-tab" data-tab="about">About</button>
+    </nav>
+
     <div id="status" class="status" hidden></div>
 
     <main>
-      <ul id="entry-list" class="pp-gallery admin-gallery"></ul>
+      <section id="collection-panel">
+        <ul id="entry-list" class="pp-gallery admin-gallery"></ul>
+      </section>
+
+      <section id="about-panel" hidden>
+        <div class="about-form-section">
+          <h2 class="admin-section-heading">Portrait</h2>
+          <div id="about-portrait-wrap" class="about-image-field">
+            <img id="about-portrait-preview" class="about-admin-preview" alt="" />
+            <input type="file" id="about-portrait-file" accept="image/*" />
+          </div>
+        </div>
+
+        <div class="about-form-section">
+          <h2 class="admin-section-heading">Strip photos</h2>
+          <div id="about-strip-images"></div>
+          <button type="button" id="about-strip-add-btn" class="btn btn-secondary">+ Add strip photo</button>
+        </div>
+
+        <div class="about-form-section">
+          <div id="about-bio-fields"></div>
+        </div>
+
+        <div class="about-form-section">
+          <div id="about-social-fields"></div>
+        </div>
+
+        <div class="about-form-actions">
+          <button type="button" id="about-save-btn" class="btn btn-primary">Save About Page</button>
+        </div>
+      </section>
     </main>
 
-    <button id="add-btn" class="fab" title="Add New Credit" aria-label="Add New Credit">&#43;</button>
+    <button id="add-btn" class="fab" title="Add" aria-label="Add">&#43;</button>
 
     <dialog id="entry-dialog">
       <form id="entry-form" novalidate>
-        <h2 id="dialog-title">Add Credit</h2>
+        <h2 id="dialog-title">Add Entry</h2>
         <input type="hidden" id="entry-id" name="id" />
 
-        <label>
-          Title
-          <input type="text" id="field-title" name="title" required />
-        </label>
+        <div id="dialog-image-field" class="field-wrap">
+          <label class="field-label"><span id="image-field-label">Image</span> <span id="image-hint" class="hint"></span></label>
+          <img id="current-image-preview" class="current-image-preview" hidden />
+          <input type="file" id="field-image" accept="image/*" />
+        </div>
 
-        <label>
-          Role
-          <input type="text" id="field-role" name="role" required />
-        </label>
-
-        <label>
-          Type
-          <select id="field-type" name="type" required>
-            <option value="Feature">Feature</option>
-            <option value="Short">Short</option>
-            <option value="Vertical">Vertical</option>
-          </select>
-        </label>
-
-        <label>
-          Year
-          <input type="text" id="field-year" name="year" />
-        </label>
-
-        <label>
-          Link
-          <input type="url" id="field-link" name="link" placeholder="https://..." />
-        </label>
-
-        <label class="checkbox-label">
-          <input type="checkbox" id="field-featured" name="featured" checked />
-          Featured
-        </label>
-
-        <label>
-          Image <span id="image-hint" class="hint">(required)</span>
-          <input type="file" id="field-image" name="image" accept="image/*" />
-        </label>
-        <img id="current-image-preview" class="current-image-preview" hidden />
+        <div id="dialog-fields"></div>
 
         <p id="form-error" class="form-error" hidden></p>
 
@@ -81,6 +85,8 @@
       </form>
     </dialog>
 
+    <script src="/field-editor.js"></script>
     <script src="/app.js"></script>
+    <script src="/about.js"></script>
   </body>
 </html>

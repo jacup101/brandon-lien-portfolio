@@ -2,12 +2,13 @@ import { randomUUID } from 'node:crypto';
 import path from 'node:path';
 import { Router } from 'express';
 import multer from 'multer';
+import { COLLECTIONS, getCollection } from './collections.ts';
+import type { CollectionConfig, FieldSchema } from './collections.ts';
 import { stageAndCommit } from './git.ts';
-import { IMAGE_DIR, compressAndSaveImage, resolveImagePath, slugify } from './images.ts';
-import { DATA_FILE, REPO_ROOT, loadEntries, saveEntries } from './store.ts';
-import type { AdminEntry, PostProductionWorkType } from './types.ts';
+import { absoluteImagePath, compressAndSaveImage, resolveImagePath, slugify } from './images.ts';
+import { REPO_ROOT, loadJson, saveJson } from './store.ts';
 
-const VALID_TYPES: PostProductionWorkType[] = ['Feature', 'Short', 'Vertical'];
+type Entry = Record<string, unknown>;
 
 const upload = multer({
   storage: multer.diskStorage({
@@ -18,125 +19,209 @@ const upload = multer({
   limits: { fileSize: 25 * 1024 * 1024 },
 });
 
-function uniqueId(base: string, entries: AdminEntry[]): string {
-  const ids = new Set(entries.map((entry) => entry.id));
+function uniqueId(base: string, entries: Entry[], idField: string): string {
+  const ids = new Set(entries.map((entry) => entry[idField]));
   if (!ids.has(base)) return base;
   let n = 2;
   while (ids.has(`${base}-${n}`)) n += 1;
   return `${base}-${n}`;
 }
 
-function readFormFields(body: Record<string, unknown>) {
-  const title = typeof body.title === 'string' ? body.title.trim() : '';
-  const role = typeof body.role === 'string' ? body.role.trim() : '';
-  const type = typeof body.type === 'string' ? body.type : '';
-  const year = typeof body.year === 'string' ? body.year.trim() : '';
-  const link = typeof body.link === 'string' ? body.link.trim() : '';
-  const featured = body.featured === 'true';
-
-  if (!title || !role || !VALID_TYPES.includes(type as PostProductionWorkType)) {
-    throw new Error('Title, role, and a valid type are required.');
-  }
-
-  return { title, role, type: type as PostProductionWorkType, year, link, featured };
+function defaultForField(field: FieldSchema): unknown {
+  if (field.type === 'array') return [];
+  if (field.type === 'checkbox') return false;
+  if (field.type === 'number') return null;
+  return '';
 }
 
-export const router = Router();
-
-router.get('/entries', (_req, res) => {
-  res.json(loadEntries());
-});
-
-router.post('/entries', upload.single('image'), async (req, res) => {
-  try {
-    const fields = readFormFields(req.body);
-    if (!req.file) {
-      throw new Error('An image is required when adding a new credit.');
-    }
-
-    const entries = loadEntries();
-    const id = uniqueId(slugify(fields.title), entries);
-    const slug = slugify(fields.title);
-    const { absPath, imgPath } = resolveImagePath(slug, '.jpg');
-    await compressAndSaveImage(req.file.path, absPath);
-
-    const entry: AdminEntry = { id, ...fields, imgPath, updatedAt: Date.now() };
-    entries.push(entry);
-    saveEntries(entries);
-
-    const git = stageAndCommit([DATA_FILE, absPath], `Add post-sound credit: ${entry.title}`);
-    res.status(201).json({ entry, git });
-  } catch (err) {
-    res.status(400).json({ error: (err as Error).message });
+/** Validates + shapes a raw parsed `data` JSON object against a collection's field schema. */
+function shapeEntry(config: CollectionConfig, raw: unknown): Entry {
+  if (typeof raw !== 'object' || raw === null || Array.isArray(raw)) {
+    throw new Error('Invalid entry data.');
   }
-});
+  const data = raw as Entry;
+  const result: Entry = {};
 
-router.put('/entries/reorder', (req, res) => {
-  try {
-    const order: unknown = req.body.order;
-    if (!Array.isArray(order) || !order.every((id) => typeof id === 'string')) {
-      throw new Error('order must be an array of entry ids.');
+  for (const field of config.fields) {
+    const value = data[field.key];
+    const isEmpty = value === undefined || value === null || value === '';
+
+    if (field.required && isEmpty) {
+      throw new Error(`${field.label} is required.`);
     }
 
-    const entries = loadEntries();
-    const byId = new Map(entries.map((entry) => [entry.id, entry]));
-    if (order.length !== entries.length || !order.every((id) => byId.has(id))) {
-      throw new Error('order must contain exactly the current entry ids, each once.');
+    if (field.type === 'array' && value !== undefined && !Array.isArray(value)) {
+      throw new Error(`${field.label} must be a list.`);
     }
 
-    const reordered = order.map((id) => byId.get(id) as AdminEntry);
-    saveEntries(reordered);
-    const git = stageAndCommit([DATA_FILE], 'Reorder post-sound credits');
-    res.json({ entries: reordered, git });
-  } catch (err) {
-    res.status(400).json({ error: (err as Error).message });
+    result[field.key] = isEmpty ? defaultForField(field) : value;
   }
-});
 
-router.put('/entries/:id', upload.single('image'), async (req, res) => {
+  return result;
+}
+
+function parseDataField(body: Record<string, unknown>): unknown {
+  const raw = body.data;
+  if (typeof raw !== 'string') {
+    throw new Error('Missing entry data.');
+  }
   try {
-    const entries = loadEntries();
-    const idx = entries.findIndex((entry) => entry.id === req.params.id);
+    return JSON.parse(raw);
+  } catch {
+    throw new Error('Entry data is not valid JSON.');
+  }
+}
+
+function createCollectionRouter(config: CollectionConfig): Router {
+  const router = Router();
+
+  router.get('/entries', (_req, res) => {
+    res.json(loadJson<Entry[]>(config.dataFile));
+  });
+
+  router.post('/entries', upload.single('image'), async (req, res) => {
+    try {
+      const fields = shapeEntry(config, parseDataField(req.body));
+      const entries = loadJson<Entry[]>(config.dataFile);
+
+      const idSource =
+        config.idField === 'id'
+          ? String(fields[config.titleField] ?? '')
+          : String(fields[config.idField] ?? '');
+      if (!idSource.trim()) {
+        throw new Error(`${config.idField === 'id' ? config.titleField : config.idField} is required.`);
+      }
+      const id = uniqueId(slugify(idSource), entries, config.idField);
+
+      const committedPaths = [config.dataFile];
+
+      if (config.primaryImage) {
+        if (config.primaryImage.requiredOnAdd && !req.file) {
+          throw new Error(`${config.primaryImage.label} is required.`);
+        }
+        if (req.file) {
+          const slug = slugify(idSource);
+          const { absPath, imgPath } = resolveImagePath(config.imageDir, config.imagePathPrefix, slug, '.jpg');
+          await compressAndSaveImage(req.file.path, absPath);
+          fields[config.primaryImage.key] = imgPath;
+          committedPaths.push(absPath);
+        } else {
+          fields[config.primaryImage.key] = fields[config.primaryImage.key] ?? '';
+        }
+      }
+
+      const entry: Entry = { [config.idField]: id, ...fields, updatedAt: Date.now() };
+      entries.push(entry);
+      saveJson(config.dataFile, entries);
+
+      const title = String(entry[config.titleField] ?? id);
+      const git = stageAndCommit(committedPaths, `Add ${config.label} entry: ${title}`);
+      res.status(201).json({ entry, git });
+    } catch (err) {
+      res.status(400).json({ error: (err as Error).message });
+    }
+  });
+
+  router.put('/entries/reorder', (req, res) => {
+    try {
+      const order: unknown = req.body.order;
+      if (!Array.isArray(order) || !order.every((id) => typeof id === 'string')) {
+        throw new Error('order must be an array of entry ids.');
+      }
+
+      const entries = loadJson<Entry[]>(config.dataFile);
+      const byId = new Map(entries.map((entry) => [String(entry[config.idField]), entry]));
+      if (order.length !== entries.length || !order.every((id) => byId.has(id))) {
+        throw new Error('order must contain exactly the current entry ids, each once.');
+      }
+
+      const reordered = order.map((id) => byId.get(id) as Entry);
+      saveJson(config.dataFile, reordered);
+      const git = stageAndCommit([config.dataFile], `Reorder ${config.label} entries`);
+      res.json({ entries: reordered, git });
+    } catch (err) {
+      res.status(400).json({ error: (err as Error).message });
+    }
+  });
+
+  router.put('/entries/:entryId', upload.single('image'), async (req, res) => {
+    try {
+      const entries = loadJson<Entry[]>(config.dataFile);
+      const idx = entries.findIndex((entry) => String(entry[config.idField]) === req.params.entryId);
+      if (idx === -1) {
+        res.status(404).json({ error: 'Entry not found.' });
+        return;
+      }
+
+      const fields = shapeEntry(config, parseDataField(req.body));
+      const existing = entries[idx];
+      const committedPaths = [config.dataFile];
+
+      if (config.primaryImage) {
+        const existingImgPath = String(existing[config.primaryImage.key] ?? '');
+        if (req.file) {
+          const idSource =
+            config.idField === 'id'
+              ? String(fields[config.titleField] ?? '')
+              : String(fields[config.idField] ?? existing[config.idField]);
+          const slug = slugify(idSource);
+          const currentAbsPath = existingImgPath
+            ? absoluteImagePath(config.imageDir, existingImgPath)
+            : undefined;
+          const resolved = resolveImagePath(config.imageDir, config.imagePathPrefix, slug, '.jpg', currentAbsPath);
+          await compressAndSaveImage(req.file.path, resolved.absPath);
+          fields[config.primaryImage.key] = resolved.imgPath;
+          committedPaths.push(resolved.absPath);
+        } else {
+          fields[config.primaryImage.key] = existingImgPath;
+        }
+      }
+
+      const updated: Entry = { ...existing, ...fields, updatedAt: Date.now() };
+      entries[idx] = updated;
+      saveJson(config.dataFile, entries);
+
+      const title = String(updated[config.titleField] ?? req.params.entryId);
+      const git = stageAndCommit(committedPaths, `Edit ${config.label} entry: ${title}`);
+      res.json({ entry: updated, git });
+    } catch (err) {
+      res.status(400).json({ error: (err as Error).message });
+    }
+  });
+
+  router.delete('/entries/:entryId', (req, res) => {
+    const entries = loadJson<Entry[]>(config.dataFile);
+    const idx = entries.findIndex((entry) => String(entry[config.idField]) === req.params.entryId);
     if (idx === -1) {
       res.status(404).json({ error: 'Entry not found.' });
       return;
     }
 
-    const fields = readFormFields(req.body);
-    const existing = entries[idx];
-    let imgPath = existing.imgPath;
-    const committedPaths = [DATA_FILE];
+    const [removed] = entries.splice(idx, 1);
+    saveJson(config.dataFile, entries);
+    const title = String(removed[config.titleField] ?? req.params.entryId);
+    const git = stageAndCommit([config.dataFile], `Remove ${config.label} entry: ${title}`);
+    res.json({ git });
+  });
 
-    if (req.file) {
-      const slug = slugify(fields.title);
-      const currentAbsPath = path.join(IMAGE_DIR, path.basename(existing.imgPath));
-      const resolved = resolveImagePath(slug, '.jpg', currentAbsPath);
-      await compressAndSaveImage(req.file.path, resolved.absPath);
-      imgPath = resolved.imgPath;
-      committedPaths.push(resolved.absPath);
-    }
+  return router;
+}
 
-    const updated: AdminEntry = { ...existing, ...fields, imgPath, updatedAt: Date.now() };
-    entries[idx] = updated;
-    saveEntries(entries);
+export const router = Router();
 
-    const git = stageAndCommit(committedPaths, `Edit post-sound credit: ${updated.title}`);
-    res.json({ entry: updated, git });
-  } catch (err) {
-    res.status(400).json({ error: (err as Error).message });
-  }
+router.get('/collections', (_req, res) => {
+  res.json(COLLECTIONS);
 });
 
-router.delete('/entries/:id', (req, res) => {
-  const entries = loadEntries();
-  const idx = entries.findIndex((entry) => entry.id === req.params.id);
-  if (idx === -1) {
-    res.status(404).json({ error: 'Entry not found.' });
+for (const config of COLLECTIONS) {
+  router.use(`/collections/${config.id}`, createCollectionRouter(config));
+}
+
+router.use((req, res, next) => {
+  const match = req.path.match(/^\/collections\/([^/]+)/);
+  if (match && !getCollection(match[1])) {
+    res.status(404).json({ error: `Unknown collection: ${match[1]}` });
     return;
   }
-
-  const [removed] = entries.splice(idx, 1);
-  saveEntries(entries);
-  const git = stageAndCommit([DATA_FILE], `Remove post-sound credit: ${removed.title}`);
-  res.json({ git });
+  next();
 });

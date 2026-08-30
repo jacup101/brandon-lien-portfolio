@@ -6,10 +6,22 @@ const cancelBtn = document.getElementById('cancel-btn');
 const dialog = document.getElementById('entry-dialog');
 const form = document.getElementById('entry-form');
 const dialogTitle = document.getElementById('dialog-title');
+const dialogFieldsEl = document.getElementById('dialog-fields');
 const formError = document.getElementById('form-error');
+const imageFieldWrap = document.getElementById('dialog-image-field');
+const imageFieldLabel = document.getElementById('image-field-label');
 const imageHint = document.getElementById('image-hint');
 const currentImagePreview = document.getElementById('current-image-preview');
+const fieldImageInput = document.getElementById('field-image');
+const pageTitleEl = document.getElementById('page-title');
+const pageSubtitleEl = document.getElementById('page-subtitle');
+const collectionPanel = document.getElementById('collection-panel');
+const aboutPanel = document.getElementById('about-panel');
 
+const DEFAULT_SUBTITLE = 'Local-only — changes commit to git automatically, but never push.';
+
+let collections = {};
+let activeCollectionId = 'post-sound';
 let entries = [];
 let orderDirty = false;
 let draggedEl = null;
@@ -35,30 +47,94 @@ function describeGit(git) {
   return ` Saved, but git commit failed: ${git.error}`;
 }
 
+function escapeHtml(str) {
+  return String(str).replace(/[&<>"']/g, (c) => ({
+    '&': '&amp;',
+    '<': '&lt;',
+    '>': '&gt;',
+    '"': '&quot;',
+    "'": '&#39;',
+  })[c]);
+}
+
+async function init() {
+  const list = await fetchJSON('/api/collections');
+  collections = Object.fromEntries(list.map((c) => [c.id, c]));
+  document.querySelectorAll('.admin-tab').forEach((tab) => {
+    tab.addEventListener('click', () => switchTab(tab.dataset.tab));
+  });
+  switchTab('post-sound');
+}
+
+function switchTab(tabId) {
+  document.querySelectorAll('.admin-tab').forEach((t) => t.classList.toggle('active', t.dataset.tab === tabId));
+  statusEl.hidden = true;
+
+  if (tabId === 'about') {
+    collectionPanel.hidden = true;
+    aboutPanel.hidden = false;
+    addBtn.hidden = true;
+    saveOrderBtn.hidden = true;
+    pageTitleEl.textContent = 'About Page';
+    pageSubtitleEl.textContent = DEFAULT_SUBTITLE;
+    loadAboutContent();
+    return;
+  }
+
+  collectionPanel.hidden = false;
+  aboutPanel.hidden = true;
+  addBtn.hidden = false;
+  saveOrderBtn.hidden = false;
+  activeCollectionId = tabId;
+  const config = collections[tabId];
+  pageTitleEl.textContent = `${config.label} Entries`;
+  pageSubtitleEl.textContent = DEFAULT_SUBTITLE;
+  loadEntries().catch((err) => showStatus(err.message, true));
+}
+
 async function loadEntries() {
-  entries = await fetchJSON('/api/entries');
+  entries = await fetchJSON(`/api/collections/${activeCollectionId}/entries`);
   orderDirty = false;
   saveOrderBtn.disabled = true;
   render();
 }
 
+function cardImageSrc(config, entry) {
+  if (!config.primaryImage) return null;
+  const imgPath = entry[config.primaryImage.key];
+  return imgPath ? `/site-assets${imgPath}?v=${entry.updatedAt || 0}` : null;
+}
+
+function cardSubtitle(entry) {
+  return ['role', 'type', 'year']
+    .map((key) => entry[key])
+    .filter(Boolean)
+    .join(' · ');
+}
+
 function render() {
+  const config = collections[activeCollectionId];
   listEl.innerHTML = '';
+
   entries.forEach((entry) => {
+    const id = entry[config.idField];
     const li = document.createElement('li');
     li.className = 'pp-gallery-card admin-card';
     li.draggable = true;
-    li.dataset.id = entry.id;
+    li.dataset.id = id;
+
+    const imgSrc = cardImageSrc(config, entry);
+    const title = entry[config.titleField] || '(untitled)';
+    const subtitle = cardSubtitle(entry);
 
     li.innerHTML = `
       <div class="admin-image-wrap">
-        <img src="/site-assets${entry.imgPath}?v=${entry.updatedAt || 0}" alt="" />
+        ${imgSrc ? `<img src="${imgSrc}" alt="" />` : '<div class="admin-image-placeholder"></div>'}
         <div class="pp-gallery-overlay">
-          <p class="pp-gallery-title">${escapeHtml(entry.title)}</p>
-          <p class="pp-gallery-role">${escapeHtml(entry.role)}</p>
-          <p class="pp-gallery-type">${escapeHtml(entry.type)}${entry.year ? ' · ' + escapeHtml(entry.year) : ''}</p>
+          <p class="pp-gallery-title">${escapeHtml(title)}</p>
+          ${subtitle ? `<p class="pp-gallery-role">${escapeHtml(subtitle)}</p>` : ''}
         </div>
-        ${entry.featured ? '<span class="admin-featured-badge">Featured</span>' : ''}
+        ${entry.featured === true ? '<span class="admin-featured-badge">Featured</span>' : ''}
         <span class="admin-drag-handle" title="Drag to reorder">&#9776;</span>
         <div class="admin-card-actions">
           <button type="button" class="admin-icon-btn" data-action="edit" title="Edit">&#9998;</button>
@@ -111,13 +187,12 @@ listEl.addEventListener('dragover', (e) => {
   orderDirty = true;
   saveOrderBtn.disabled = false;
 });
-
 listEl.addEventListener('drop', (e) => e.preventDefault());
 
 async function saveOrder() {
   const order = [...listEl.children].map((li) => li.dataset.id);
   try {
-    const { git } = await fetchJSON('/api/entries/reorder', {
+    const { git } = await fetchJSON(`/api/collections/${activeCollectionId}/entries/reorder`, {
       method: 'PUT',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({ order }),
@@ -131,41 +206,66 @@ async function saveOrder() {
 }
 
 async function deleteEntry(entry) {
-  if (!confirm(`Delete "${entry.title}"? This cannot be undone from this tool.`)) return;
+  const config = collections[activeCollectionId];
+  const id = entry[config.idField];
+  const title = entry[config.titleField] || id;
+  if (!confirm(`Delete "${title}"? This cannot be undone from this tool.`)) return;
   try {
-    const { git } = await fetchJSON(`/api/entries/${encodeURIComponent(entry.id)}`, { method: 'DELETE' });
-    showStatus(`Removed "${entry.title}".` + describeGit(git), false);
+    const { git } = await fetchJSON(`/api/collections/${activeCollectionId}/entries/${encodeURIComponent(id)}`, {
+      method: 'DELETE',
+    });
+    showStatus(`Removed "${title}".` + describeGit(git), false);
     await loadEntries();
   } catch (err) {
     showStatus(err.message, true);
   }
 }
 
+function setupImageField(config, entry) {
+  if (!config.primaryImage) {
+    imageFieldWrap.hidden = true;
+    return;
+  }
+  imageFieldWrap.hidden = false;
+  imageFieldLabel.textContent = config.primaryImage.label;
+  fieldImageInput.value = '';
+
+  const isAdd = !entry;
+  const required = Boolean(config.primaryImage.requiredOnAdd) && isAdd;
+  fieldImageInput.required = required;
+
+  const currentPath = entry ? entry[config.primaryImage.key] : '';
+  if (currentPath) {
+    currentImagePreview.src = `/site-assets${currentPath}?v=${entry.updatedAt || 0}`;
+    currentImagePreview.hidden = false;
+  } else {
+    currentImagePreview.hidden = true;
+  }
+  imageHint.textContent = isAdd
+    ? required
+      ? '(required — auto-compressed on save)'
+      : '(optional — auto-compressed on save)'
+    : '(optional — leave blank to keep current image; auto-compressed on save)';
+}
+
 function openAddDialog() {
+  const config = collections[activeCollectionId];
   form.reset();
   document.getElementById('entry-id').value = '';
-  dialogTitle.textContent = 'Add Credit';
-  imageHint.textContent = '(required — auto-compressed on save)';
-  document.getElementById('field-image').required = true;
-  currentImagePreview.hidden = true;
+  dialogTitle.textContent = `Add ${config.label} Entry`;
+  setupImageField(config, null);
+  renderFieldList(dialogFieldsEl, config.fields, null);
   formError.hidden = true;
   dialog.showModal();
 }
 
 function openEditDialog(entry) {
+  const config = collections[activeCollectionId];
   form.reset();
-  document.getElementById('entry-id').value = entry.id;
-  document.getElementById('field-title').value = entry.title;
-  document.getElementById('field-role').value = entry.role;
-  document.getElementById('field-type').value = entry.type;
-  document.getElementById('field-year').value = entry.year;
-  document.getElementById('field-link').value = entry.link;
-  document.getElementById('field-featured').checked = entry.featured;
-  dialogTitle.textContent = 'Edit Credit';
-  imageHint.textContent = '(optional — leave blank to keep current image; auto-compressed on save)';
-  document.getElementById('field-image').required = false;
-  currentImagePreview.src = `/site-assets${entry.imgPath}?v=${entry.updatedAt || 0}`;
-  currentImagePreview.hidden = false;
+  document.getElementById('entry-id').value = entry[config.idField];
+  dialogTitle.textContent = `Edit ${config.label} Entry`;
+  setupImageField(config, entry);
+  renderFieldList(dialogFieldsEl, config.fields, entry);
   formError.hidden = true;
   dialog.showModal();
 }
@@ -173,20 +273,24 @@ function openEditDialog(entry) {
 async function submitForm(e) {
   e.preventDefault();
   formError.hidden = true;
+  const config = collections[activeCollectionId];
 
   const id = document.getElementById('entry-id').value;
-  const formData = new FormData(form);
-  formData.set('featured', document.getElementById('field-featured').checked ? 'true' : 'false');
-  if (!formData.get('image') || formData.get('image').size === 0) {
-    formData.delete('image');
+  const data = collectFieldList(dialogFieldsEl, config.fields);
+
+  const formData = new FormData();
+  formData.set('data', JSON.stringify(data));
+  if (config.primaryImage && fieldImageInput.files[0]) {
+    formData.set('image', fieldImageInput.files[0]);
   }
 
   try {
-    const { git, entry } = id
-      ? await fetchJSON(`/api/entries/${encodeURIComponent(id)}`, { method: 'PUT', body: formData })
-      : await fetchJSON('/api/entries', { method: 'POST', body: formData });
+    const url = id
+      ? `/api/collections/${activeCollectionId}/entries/${encodeURIComponent(id)}`
+      : `/api/collections/${activeCollectionId}/entries`;
+    const { git, entry } = await fetchJSON(url, { method: id ? 'PUT' : 'POST', body: formData });
     dialog.close();
-    showStatus(`Saved "${entry.title}".` + describeGit(git), false);
+    showStatus(`Saved "${entry[config.titleField]}".` + describeGit(git), false);
     await loadEntries();
   } catch (err) {
     formError.textContent = err.message;
@@ -194,19 +298,9 @@ async function submitForm(e) {
   }
 }
 
-function escapeHtml(str) {
-  return String(str).replace(/[&<>"']/g, (c) => ({
-    '&': '&amp;',
-    '<': '&lt;',
-    '>': '&gt;',
-    '"': '&quot;',
-    "'": '&#39;',
-  })[c]);
-}
-
 addBtn.addEventListener('click', openAddDialog);
 cancelBtn.addEventListener('click', () => dialog.close());
 saveOrderBtn.addEventListener('click', saveOrder);
 form.addEventListener('submit', submitForm);
 
-loadEntries().catch((err) => showStatus(err.message, true));
+init().catch((err) => showStatus(err.message, true));

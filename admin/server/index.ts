@@ -2,6 +2,7 @@ import { networkInterfaces } from 'node:os';
 import path from 'node:path';
 import { fileURLToPath } from 'node:url';
 import express from 'express';
+import { aboutRouter } from './about.ts';
 import { router } from './routes.ts';
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
@@ -22,6 +23,7 @@ function externalAddresses(): { name: string; address: string }[] {
 
 const app = express();
 app.use(express.json());
+app.use('/api/about', aboutRouter);
 app.use('/api', router);
 app.use('/site-assets', express.static(path.join(__dirname, '../../public')));
 app.use(express.static(path.join(__dirname, '../public')));
