@@ -70,7 +70,7 @@ const FilmsPage = () => {
           </div>
 
           <section id="gallery" className="pp-page-section" aria-label="Gallery">
-            <PostProductionGallery />
+            <PostProductionGallery featuredOnly />
           </section>
 
           <section className="pp-page-section pp-experience-section" aria-label="Employment">

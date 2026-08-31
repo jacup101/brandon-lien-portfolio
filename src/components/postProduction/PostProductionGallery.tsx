@@ -53,6 +53,9 @@ function PostProductionGallery(props: PostProductionGalleryProps) {
     return <p style={{ color: 'var(--site-muted)', textAlign: 'center' }}>Couldn&apos;t load the gallery right now.</p>;
   }
 
+  // Nothing featured yet — render nothing rather than an empty grid.
+  if (workItems.length === 0) return null;
+
   return (
     <div className="pp-gallery pp-gallery-loaded">
       {workItems.map((item, index) => {

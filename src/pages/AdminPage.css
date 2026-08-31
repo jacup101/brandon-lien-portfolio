@@ -15,18 +15,342 @@
   border-bottom: 1px solid var(--site-border);
 }
 
-.admin-header-actions {
+.admin-shell {
+  display: flex;
+  align-items: flex-start;
+  gap: 2rem;
+}
+
+.admin-sidebar {
+  display: flex;
+  flex-direction: column;
+  flex: none;
+  width: 190px;
+  gap: 1.5rem;
+  padding: 1.25rem 0;
+  position: sticky;
+  top: 1.5rem;
+}
+
+.admin-sidebar-title {
+  margin: 0;
+  padding: 0 0.75rem;
+  font-family: var(--site-font-display);
+  font-size: 1rem;
+  letter-spacing: 0.05em;
+  text-transform: uppercase;
+  color: var(--site-muted);
+}
+
+.admin-sidebar-profile {
+  position: relative;
+}
+
+.admin-sidebar-profile-trigger {
   display: flex;
   align-items: center;
   gap: 0.6rem;
+  width: 100%;
+  padding: 0.4rem 0.75rem;
+  border: none;
+  border-radius: 6px;
+  background: none;
+  color: inherit;
+  font-family: inherit;
+  text-align: left;
+  cursor: pointer;
+}
+
+.admin-sidebar-profile-trigger:hover,
+.admin-sidebar-profile-trigger[aria-expanded='true'] {
+  background: var(--site-bg-soft);
+}
+
+.admin-sidebar-profile-menu {
+  position: absolute;
+  top: 100%;
+  left: 0.75rem;
+  right: 0.75rem;
+  margin-top: 0.3rem;
+  background: var(--site-bg-elevated);
+  border: 1px solid var(--site-border);
+  border-radius: 8px;
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.45);
+  overflow: hidden;
+  z-index: 20;
+}
+
+.admin-sidebar-profile-menu-item {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  width: 100%;
+  border: none;
+  background: none;
+  color: var(--site-text);
+  font-size: 0.85rem;
+  font-family: var(--site-font-body);
+  text-align: left;
+  padding: 0.65rem 0.85rem;
+  cursor: pointer;
+}
+
+.admin-sidebar-profile-menu-item:hover {
+  background: var(--site-bg-soft);
+}
+
+.admin-sidebar-avatar {
+  flex: none;
+  width: 36px;
+  height: 36px;
+  border-radius: 50%;
+  object-fit: cover;
+  background: var(--site-bg-soft);
+}
+
+.admin-sidebar-avatar-fallback {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: var(--site-accent-soft);
+  color: var(--site-accent);
+  font-weight: 700;
+  font-size: 0.95rem;
+}
+
+.admin-sidebar-profile-text {
+  min-width: 0;
+}
+
+.admin-sidebar-profile-name,
+.admin-sidebar-profile-email {
+  margin: 0;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.admin-sidebar-profile-name {
+  font-size: 0.85rem;
+  font-weight: 600;
+}
+
+.admin-sidebar-profile-email {
+  font-size: 0.72rem;
+  color: var(--site-muted);
+}
+
+.admin-sidebar-nav {
+  display: flex;
+  flex-direction: column;
+  gap: 0.25rem;
+}
+
+.admin-sidebar-link {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.5rem;
+  border: none;
+  border-radius: 6px;
+  padding: 0.55rem 0.75rem;
+  background: none;
+  color: var(--site-text);
+  font-size: 0.9rem;
+  font-family: var(--site-font-body);
+  text-align: left;
+  cursor: pointer;
+}
+
+.admin-sidebar-link:hover:not(:disabled) {
+  background: var(--site-bg-soft);
+}
+
+.admin-sidebar-link.active {
+  background: var(--site-accent-soft);
+  color: var(--site-accent);
+  font-weight: 600;
+}
+
+.admin-sidebar-link:disabled {
+  color: var(--site-muted);
+  cursor: default;
+  opacity: 0.65;
+}
+
+.admin-sidebar-badge {
+  flex: none;
+  background: var(--site-bg-soft);
+  border: 1px solid var(--site-border);
+  color: var(--site-muted);
+  font-size: 0.62rem;
+  font-weight: 700;
+  letter-spacing: 0.05em;
+  text-transform: uppercase;
+  padding: 0.15rem 0.4rem;
+  border-radius: 999px;
+}
+
+.admin-content {
+  flex: 1;
+  min-width: 0;
+}
+
+.admin-coming-soon {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.4rem;
+  text-align: center;
+  padding: 5rem 1rem;
+  color: var(--site-muted);
+}
+
+.admin-coming-soon h1 {
+  margin: 0;
+  font-family: var(--site-font-display);
+  font-size: 1.3rem;
+  letter-spacing: 0.05em;
+  text-transform: uppercase;
+  color: var(--site-text);
+}
+
+@media (max-width: 720px) {
+  .admin-shell {
+    flex-direction: column;
+    gap: 1.25rem;
+  }
+
+  .admin-sidebar {
+    flex-direction: row;
+    align-items: center;
+    width: 100%;
+    padding: 0 0 1rem;
+    position: static;
+    border-bottom: 1px solid var(--site-border);
+  }
+
+  .admin-sidebar-title {
+    display: none;
+  }
+
+  /* Profile stays visible here (unlike the title) — it's now the only way
+     to reach Sign Out, just avatar-only to fit the horizontal strip. */
+  .admin-sidebar-profile {
+    flex: none;
+  }
+
+  .admin-sidebar-profile-trigger {
+    padding: 0.4rem;
+  }
+
+  .admin-sidebar-profile-text {
+    display: none;
+  }
+
+  .admin-sidebar-profile-menu {
+    left: 0;
+    right: auto;
+    width: max-content;
+  }
+
+  .admin-sidebar-nav {
+    flex-direction: row;
+    flex: 1;
+    overflow-x: auto;
+  }
+
+  .admin-sidebar-link {
+    flex: none;
+  }
 }
 
 .admin-page-signin {
   display: flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 70vh;
+}
+
+.admin-signin-card {
+  display: flex;
   flex-direction: column;
-  align-items: flex-start;
-  gap: 0.75rem;
-  padding-top: 4rem;
+  align-items: center;
+  gap: 0.9rem;
+  width: min(360px, 100%);
+  padding: 2.5rem 2rem;
+  text-align: center;
+  background: var(--site-bg-elevated);
+  border: 1px solid var(--site-border);
+  border-radius: 12px;
+}
+
+.admin-signin-card h1 {
+  margin: 0;
+  font-family: var(--site-font-display);
+  font-size: 1.4rem;
+  letter-spacing: 0.05em;
+  text-transform: uppercase;
+}
+
+.admin-signin-card .admin-page-subtitle {
+  margin: 0 0 0.4rem;
+}
+
+/* Google's real button renders invisibly on top of our own styled one — a
+   click lands on the real (invisible) iframe underneath. See the comment
+   on useGoogleSignIn in AdminPage.tsx for why. */
+.admin-google-btn-wrap {
+  position: relative;
+  width: 260px;
+  height: 44px;
+}
+
+.admin-google-btn-visual {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.6rem;
+  border-radius: 999px;
+  background: var(--site-accent);
+  color: #1a1400;
+  font-weight: 600;
+  font-size: 0.9rem;
+  font-family: var(--site-font-body);
+  pointer-events: none;
+  transition: filter 120ms ease;
+}
+
+.admin-google-btn-wrap:hover .admin-google-btn-visual {
+  filter: brightness(1.06);
+}
+
+.admin-google-glyph {
+  flex: none;
+  background: #fff;
+  border-radius: 50%;
+  padding: 2px;
+}
+
+.admin-google-btn-real {
+  position: absolute;
+  inset: 0;
+  overflow: hidden;
+  opacity: 0;
+}
+
+.admin-signin-home-link {
+  margin-top: 0.5rem;
+  font-size: 0.82rem;
+  color: var(--site-muted);
+  text-decoration: none;
+}
+
+.admin-signin-home-link:hover {
+  color: var(--site-accent);
+  text-decoration: underline;
 }
 
 .admin-page-header h1 {
@@ -90,8 +414,48 @@
   }
 }
 
+/* Kept visually separate from the featured grid above on purpose — these
+   never show up on the public page, so they shouldn't compete for
+   attention with what a visitor actually sees. */
+.admin-unfeatured-section {
+  margin-top: 2.5rem;
+}
+
+.admin-section-divider {
+  height: 1px;
+  background: var(--site-border);
+  margin-bottom: 1.25rem;
+}
+
+.admin-section-heading {
+  margin: 0 0 1rem;
+  font-family: var(--site-font-display);
+  font-size: 0.85rem;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--site-muted);
+}
+
+.admin-section-heading-hint {
+  text-transform: none;
+  letter-spacing: normal;
+  font-family: var(--site-font-body);
+  font-size: 0.78rem;
+  opacity: 0.75;
+}
+
 .admin-card {
   cursor: grab;
+  transition: transform 150ms ease;
+  /* Custom pointer-driven drag (see AdminPage.tsx) needs to own touch
+     gestures on this element instead of the browser's default scroll. */
+  touch-action: none;
+  user-select: none;
+}
+
+.admin-card-dragging {
+  cursor: grabbing;
+  box-shadow: 0 12px 28px rgba(0, 0, 0, 0.5);
 }
 
 .admin-card-image-wrap {
@@ -107,6 +471,10 @@
   height: 100%;
   object-fit: cover;
   display: block;
+  /* Backs up the img's draggable={false} — browsers natively let you drag
+     an <img> out of the page, which hijacks our own pointer-based drag. */
+  -webkit-user-drag: none;
+  user-drag: none;
 }
 
 .admin-card-placeholder {
@@ -184,9 +552,18 @@
 .admin-icon-btn {
   width: 30px;
   height: 30px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
   border: none;
   border-radius: 5px;
-  background: rgba(18, 18, 18, 0.92);
+  background: rgba(10, 10, 10, 0.82);
+  /* A near-black chip alone can vanish against a dark patch of the photo
+     underneath it — the blur plus a faint light ring keeps it reading as
+     its own floating element regardless of what's behind it. */
+  backdrop-filter: blur(6px);
+  -webkit-backdrop-filter: blur(6px);
+  box-shadow: 0 1px 4px rgba(0, 0, 0, 0.6), inset 0 0 0 1px rgba(255, 255, 255, 0.16);
   color: var(--site-text);
   font-size: 0.85rem;
   cursor: pointer;
@@ -202,29 +579,63 @@
   color: #1a0a0a;
 }
 
-.admin-fab {
+.admin-icon-btn-active {
+  background: rgba(201, 164, 106, 0.35);
+  color: var(--site-accent);
+}
+
+.admin-icon-btn-active:hover {
+  background: var(--site-accent);
+  color: #1a1400;
+}
+
+.admin-fab-group {
   position: fixed;
   right: 1.75rem;
   bottom: 1.75rem;
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  z-index: 10;
+}
+
+.admin-fab {
+  position: static;
   width: 58px;
   height: 58px;
   border: none;
   border-radius: 50%;
   background: var(--site-accent);
   color: #1a1400;
-  font-size: 1.8rem;
-  line-height: 1;
   display: flex;
   align-items: center;
   justify-content: center;
   cursor: pointer;
   box-shadow: 0 8px 24px rgba(0, 0, 0, 0.45);
   transition: transform 150ms ease, box-shadow 150ms ease;
-  z-index: 10;
 }
 
 .admin-fab:hover {
   transform: translateY(-2px) scale(1.04);
+}
+
+/* Save only appears once there's something unsaved — the pulse (rather
+   than a static header button, where it used to live) is what makes it
+   "obvious you need to save," per the ask that started this. */
+.admin-fab-save {
+  animation: admin-fab-save-pulse 1.8s ease-in-out infinite;
+}
+
+@keyframes admin-fab-save-pulse {
+  0% {
+    box-shadow: 0 8px 24px rgba(0, 0, 0, 0.45), 0 0 0 0 rgba(201, 164, 106, 0.55);
+  }
+  70% {
+    box-shadow: 0 8px 24px rgba(0, 0, 0, 0.45), 0 0 0 10px rgba(201, 164, 106, 0);
+  }
+  100% {
+    box-shadow: 0 8px 24px rgba(0, 0, 0, 0.45), 0 0 0 0 rgba(201, 164, 106, 0);
+  }
 }
 
 .admin-btn {
