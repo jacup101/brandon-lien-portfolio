@@ -1,8 +1,10 @@
-# Post-sound admin tool
+# Local admin tool (Film / Music / About)
 
-A local-only tool for managing the `/post-sound` credits gallery
-(`src/data/postProductionWork.json`) without hand-editing the file or
-running git commands directly.
+A local-only tool for managing the Film, Music, and About page content
+(`src/data/filmWork.json`, `src/data/musicProjects.json`,
+`src/data/aboutContent.json`) without hand-editing files or running git
+commands directly. Post-sound used to live here too — see "Relationship
+to site-assets-backend" below for where it actually lives now.
 
 ## Running it
 

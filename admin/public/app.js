@@ -21,7 +21,7 @@ const aboutPanel = document.getElementById('about-panel');
 const DEFAULT_SUBTITLE = 'Local-only — changes commit to git automatically, but never push.';
 
 let collections = {};
-let activeCollectionId = 'post-sound';
+let activeCollectionId = 'film';
 let entries = [];
 let orderDirty = false;
 let draggedEl = null;
@@ -63,7 +63,7 @@ async function init() {
   document.querySelectorAll('.admin-tab').forEach((tab) => {
     tab.addEventListener('click', () => switchTab(tab.dataset.tab));
   });
-  switchTab('post-sound');
+  switchTab('film');
 }
 
 function switchTab(tabId) {

@@ -29,35 +29,6 @@ export interface CollectionConfig {
   fields: FieldSchema[];
 }
 
-const POST_SOUND: CollectionConfig = {
-  id: 'post-sound',
-  label: 'Post-Sound',
-  dataFile: 'src/data/postProductionWork.json',
-  imageDir: 'public/assets/film/web',
-  imagePathPrefix: '/assets/film/web',
-  idField: 'id',
-  titleField: 'title',
-  primaryImage: { key: 'imgPath', label: 'Image', requiredOnAdd: true },
-  fields: [
-    { key: 'title', label: 'Title', type: 'text', required: true },
-    { key: 'role', label: 'Role', type: 'text', required: true },
-    {
-      key: 'type',
-      label: 'Type',
-      type: 'select',
-      required: true,
-      options: [
-        { value: 'Feature', label: 'Feature' },
-        { value: 'Short', label: 'Short' },
-        { value: 'Vertical', label: 'Vertical' },
-      ],
-    },
-    { key: 'year', label: 'Year', type: 'text' },
-    { key: 'link', label: 'Link', type: 'url' },
-    { key: 'featured', label: 'Featured', type: 'checkbox' },
-  ],
-};
-
 const FILM: CollectionConfig = {
   id: 'film',
   label: 'Film',
@@ -225,7 +196,11 @@ const MUSIC: CollectionConfig = {
   ],
 };
 
-export const COLLECTIONS: CollectionConfig[] = [POST_SOUND, FILM, MUSIC];
+// post-sound isn't here — it moved to the hosted /admin page, backed by
+// site-assets-backend (see admin/README.md). Nothing reads
+// src/data/postProductionWork.json anymore; it's kept around as an
+// inert historical artifact, not wired into any live path.
+export const COLLECTIONS: CollectionConfig[] = [FILM, MUSIC];
 
 export function getCollection(id: string): CollectionConfig | undefined {
   return COLLECTIONS.find((c) => c.id === id);
