@@ -3,6 +3,7 @@
 // token obtained via the "Sign in with Google" widget (see useGoogleSignIn
 // in AdminPage.tsx), sent as a plain Bearer token; the backend verifies it
 // itself against Google's own keys.
+import type { CollectionSchema } from '../types/collectionSchema';
 const BACKEND_URL = import.meta.env.VITE_BACKEND_URL || 'https://site-assets-backend.jacup105.workers.dev';
 const SITE_ID = import.meta.env.VITE_BACKEND_SITE_ID || 'brandon-site';
 
@@ -49,6 +50,10 @@ export function listEntries(collectionId: string, token: string): Promise<Remote
   return request(`/api/sites/${SITE_ID}/collections/${collectionId}/entries`, token);
 }
 
+export function getSchema(collectionId: string, token: string): Promise<CollectionSchema> {
+  return request(`/api/sites/${SITE_ID}/collections/${collectionId}/schema`, token);
+}
+
 export function createEntry(
   collectionId: string,
   slug: string,
@@ -86,6 +91,27 @@ export function reorderEntries(collectionId: string, order: string[], token: str
     method: 'PUT',
     headers: { 'Content-Type': 'application/json' },
     body: JSON.stringify({ order }),
+  });
+}
+
+export interface RemoteDocument {
+  data: Record<string, unknown>;
+  updatedAt: number | null;
+}
+
+export function getDocumentSchema(documentId: string, token: string): Promise<CollectionSchema> {
+  return request(`/api/sites/${SITE_ID}/documents/${documentId}/schema`, token);
+}
+
+export function getDocument(documentId: string, token: string): Promise<RemoteDocument> {
+  return request(`/api/sites/${SITE_ID}/documents/${documentId}`, token);
+}
+
+export function putDocument(documentId: string, data: Record<string, unknown>, token: string): Promise<RemoteDocument> {
+  return request(`/api/sites/${SITE_ID}/documents/${documentId}`, token, {
+    method: 'PUT',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({ data }),
   });
 }
 

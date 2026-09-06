@@ -1,7 +1,7 @@
 import { FormEvent, useEffect, useId, useRef, useState } from 'react';
 import { Button, Col, Container, Form, Row } from 'react-bootstrap';
-import SocialLinks from '../components/social/SocialLinks';
-import ABOUT_CONTENT from '../data/aboutContent.json';
+import AboutContentView from '../components/about/AboutContentView';
+import { useAboutContent } from '../hooks/useAboutContent';
 import './AboutPage.css';
 
 type FormStatus = 'idle' | 'submitting' | 'success' | 'error';
@@ -23,6 +23,7 @@ function getErrorMessage(statusCode: number) {
 }
 
 function AboutPage() {
+  const { content, error: contentError } = useAboutContent();
   const [status, setStatus] = useState<FormStatus>('idle');
   const [errorMessage, setErrorMessage] = useState('');
   const [turnstileToken, setTurnstileToken] = useState('');
@@ -162,47 +163,16 @@ function AboutPage() {
   return (
     <main className="about-page">
       <Container>
-        <section className="about-hero">
-          <div className="about-hero-copy">
-            <div className="about-copy-grid about-copy-grid-hero">
-              {ABOUT_CONTENT.bioParagraphs.map((paragraph) => (
-                <p key={paragraph}>{paragraph}</p>
-              ))}
-            </div>
-          </div>
-
-          <div className="about-hero-media">
-            <div className="about-portrait-frame">
-              <img
-                className="about-portrait"
-                src={ABOUT_CONTENT.portraitImage}
-                alt="Portrait of Brandon Lien"
-                loading="eager"
-                decoding="async"
-                fetchPriority="high"
-              />
-            </div>
-
-            <SocialLinks links={ABOUT_CONTENT.socialLinks} />
-          </div>
-        </section>
+        {content === null ? (
+          <p style={{ color: 'var(--site-muted)', textAlign: 'center', padding: '4rem 1rem' }}>Loading…</p>
+        ) : contentError ? (
+          <p style={{ color: 'var(--site-muted)', textAlign: 'center', padding: '4rem 1rem' }}>Couldn&apos;t load this page right now.</p>
+        ) : (
+          <AboutContentView content={content} />
+        )}
 
         <Row className="justify-content-center">
           <Col xl={10}>
-            <section className="about-image-strip about-section" aria-label="Additional portraits">
-              {ABOUT_CONTENT.stripImages.map((image) => (
-                <div key={image.path} className="about-strip-image-frame">
-                  <img
-                    src={image.path}
-                    alt="Brandon Lien portrait"
-                    className={`about-strip-image${image.cropTop ? ' about-strip-image-top' : ''}`}
-                    loading="lazy"
-                    decoding="async"
-                  />
-                </div>
-              ))}
-            </section>
-
             <section className="about-section about-contact-section">
               <div className="about-contact-header">
                 <h2 className="about-subtitle">Contact Me</h2>

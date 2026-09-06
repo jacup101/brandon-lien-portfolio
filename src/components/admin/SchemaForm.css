@@ -1,0 +1,118 @@
+/* Field styling for SchemaForm — matches AdminPage.css's .admin-dialog
+   label/input rules (which only cover text/url/select/file), extended to
+   the field types a schema-driven form actually needs: textarea, number,
+   checkboxes, image previews, and nested array rows. */
+
+.admin-field {
+  display: block;
+  font-size: 0.85rem;
+  font-weight: 600;
+  margin-bottom: 0.9rem;
+}
+
+.admin-field input[type='text'],
+.admin-field input[type='url'],
+.admin-field input[type='number'],
+.admin-field textarea,
+.admin-field select,
+.admin-field input[type='file'] {
+  display: block;
+  width: 100%;
+  margin-top: 0.3rem;
+  padding: 0.45rem 0.55rem;
+  font-size: 0.9rem;
+  border: 1px solid var(--site-border);
+  border-radius: 6px;
+  font-weight: normal;
+  background: var(--site-bg-soft);
+  color: var(--site-text);
+  font-family: var(--site-font-body);
+}
+
+.admin-field textarea {
+  resize: vertical;
+}
+
+.admin-field-hint {
+  display: block;
+  margin-top: 0.3rem;
+  font-size: 0.75rem;
+  font-weight: normal;
+  color: var(--site-muted);
+}
+
+.admin-field-image-preview {
+  display: block;
+  width: 100%;
+  max-width: 220px;
+  height: auto;
+  margin: 0.4rem 0;
+  border-radius: 6px;
+  border: 1px solid var(--site-border);
+}
+
+.admin-array-field {
+  border: 1px solid var(--site-border);
+  border-radius: 8px;
+  padding: 0.75rem;
+  background: rgba(255, 255, 255, 0.02);
+}
+
+.admin-array-field-label {
+  display: block;
+  margin-bottom: 0.6rem;
+}
+
+.admin-array-row {
+  display: flex;
+  gap: 0.5rem;
+  align-items: flex-start;
+  padding: 0.6rem;
+  margin-bottom: 0.6rem;
+  border: 1px solid var(--site-border);
+  border-radius: 6px;
+  background: var(--site-bg-soft);
+}
+
+.admin-array-row-body {
+  flex: 1;
+  min-width: 0;
+}
+
+.admin-array-row-body .admin-field:last-child {
+  margin-bottom: 0;
+}
+
+.admin-array-row-actions {
+  display: flex;
+  flex-direction: column;
+  gap: 0.25rem;
+}
+
+.admin-array-row-actions button {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 26px;
+  height: 26px;
+  border: 1px solid var(--site-border);
+  border-radius: 6px;
+  background: var(--site-bg-elevated);
+  color: var(--site-text);
+  cursor: pointer;
+  padding: 0;
+}
+
+.admin-array-row-actions button:disabled {
+  opacity: 0.35;
+  cursor: default;
+}
+
+.admin-array-row-remove {
+  color: #ff9d9d !important;
+  border-color: rgba(220, 90, 90, 0.4) !important;
+}
+
+.admin-array-add-btn {
+  width: 100%;
+}

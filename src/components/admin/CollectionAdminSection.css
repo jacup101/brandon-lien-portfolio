@@ -1,0 +1,185 @@
+/* "film-rows" variant overrides — layered on top of FilmPage.css's real
+   .film-list/.film-list-row/etc. rules (imported alongside this file), so
+   this screen looks like /film instead of the post-sound poster grid. */
+
+/* .film-list is normally a <div> (FilmPage.tsx) — applied to a <ul> here
+   instead (this component always renders one <ul>, grid or row layout),
+   so its default bullet/indent need resetting. Margin is left alone: it's
+   .film-list's own `margin: 0 auto` that centers this list, same as it
+   centers the real page's. */
+.admin-film-list {
+  list-style: none;
+  padding: 0;
+}
+
+.admin-film-row {
+  position: relative;
+  /* .admin-card already sets cursor/touch-action/user-select/transition
+     for dragging — this just turns off the poster grid's per-card width. */
+  width: 100%;
+}
+
+/* .film-list-row:first-child normally gets the top border, but here every
+   row is the sole (and so "first") child of its own <li> wrapper, so that
+   selector would match every row, not just the actual first one. Same
+   specificity as the site's own rule (one class + :first-child each), so
+   which stylesheet's import happens to land later isn't safe to rely on
+   for the tie — !important makes this deterministic instead. */
+.admin-film-row .film-list-row {
+  border-top: none !important;
+}
+
+.admin-film-row:first-child .film-list-row {
+  border-top: 1px solid var(--site-border) !important;
+}
+
+/* The site dims a row on hover to hint "this is a link" — doesn't apply
+   here, hovering an admin row means "grab to drag", not "click to open". */
+.admin-film-row .film-list-row:hover,
+.admin-film-row .film-list-row:focus-within {
+  opacity: 1 !important;
+}
+
+/* Qualified as `.admin-film-row .admin-card-actions` (two classes), not
+   equal specificity with `.admin-card-actions` alone — AdminPage.css sets
+   that rule's opacity to 0 (revealed only on hover of the poster-grid's
+   image wrapper, which doesn't exist in this layout), and which import
+   ends up later in the built CSS isn't something to rely on for a tie. */
+.admin-film-row .admin-card-actions.admin-film-row-actions {
+  position: absolute;
+  top: 1.5rem;
+  right: 0;
+  bottom: auto;
+  opacity: 1;
+}
+
+@media (max-width: 575px) {
+  .admin-film-row .admin-card-actions.admin-film-row-actions {
+    top: 1rem;
+  }
+}
+
+/* Full-page editor (editorMode="full-page") — a real screen instead of a
+   small popup form, split between the form and a live preview of the
+   actual public page it's editing. */
+
+.admin-editor-page {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+  height: 100%;
+}
+
+.admin-editor-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1rem;
+  padding-bottom: 0.9rem;
+  border-bottom: 1px solid var(--site-border);
+}
+
+.admin-editor-header h1 {
+  margin: 0;
+  font-size: 1.15rem;
+  font-weight: 600;
+  flex: 1;
+  text-align: center;
+}
+
+.admin-editor-error {
+  margin: 0;
+}
+
+.admin-editor-body {
+  display: grid;
+  grid-template-columns: minmax(0, 380px) minmax(0, 1fr);
+  gap: 1.5rem;
+  align-items: start;
+}
+
+.admin-editor-form-pane {
+  background: var(--site-bg-soft);
+  border: 1px solid var(--site-border);
+  border-radius: 10px;
+  padding: 1.25rem;
+  max-height: calc(100vh - 180px);
+  overflow-y: auto;
+}
+
+.admin-editor-preview-pane {
+  position: sticky;
+  top: 0;
+}
+
+.admin-editor-preview-label {
+  margin: 0 0 0.6rem;
+  font-size: 0.7rem;
+  font-weight: 600;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: var(--site-muted);
+}
+
+.admin-editor-preview-frame {
+  border: 1px solid var(--site-border);
+  border-radius: 10px;
+  overflow: auto;
+  max-height: calc(100vh - 220px);
+  background: var(--site-bg);
+}
+
+@media (max-width: 980px) {
+  .admin-editor-body {
+    grid-template-columns: 1fr;
+  }
+
+  .admin-editor-preview-pane {
+    position: static;
+  }
+
+  .admin-editor-form-pane,
+  .admin-editor-preview-frame {
+    max-height: none;
+  }
+}
+
+/* editorMode="inline" — no split, the rendered page itself is the editor. */
+.admin-editor-inline-frame {
+  border: 1px solid var(--site-border);
+  border-radius: 10px;
+  overflow: auto;
+  background: var(--site-bg);
+}
+
+.admin-editor-advanced {
+  border: 1px solid var(--site-border);
+  border-radius: 8px;
+  overflow: hidden;
+}
+
+.admin-editor-advanced-toggle {
+  display: flex;
+  align-items: baseline;
+  gap: 0.4rem;
+  width: 100%;
+  padding: 0.6rem 0.9rem;
+  background: var(--site-bg-soft);
+  border: none;
+  color: var(--site-text);
+  font-size: 0.85rem;
+  font-weight: 600;
+  text-align: left;
+  cursor: pointer;
+}
+
+.admin-editor-advanced-hint {
+  font-weight: normal;
+  color: var(--site-muted);
+  font-size: 0.78rem;
+}
+
+.admin-editor-advanced-body {
+  padding: 1rem;
+  border-top: 1px solid var(--site-border);
+}

@@ -1,0 +1,232 @@
+/* Shared styling for "edit in place" primitives — the whole point is that
+   these should look exactly like the static text/images they replace
+   until you interact with them, so the live preview and the actual
+   public page stay visually identical except when you're actively
+   editing something. */
+
+.admin-inline-editable {
+  display: block;
+  width: 100%;
+  background: transparent;
+  border: none;
+  outline: none;
+  padding: 0.1em 0.2em;
+  margin: -0.1em -0.2em;
+  border-radius: 4px;
+  color: inherit;
+  font: inherit;
+  letter-spacing: inherit;
+  line-height: inherit;
+  text-transform: inherit;
+  resize: none;
+  overflow: hidden;
+}
+
+.admin-inline-editable-multiline {
+  overflow-y: hidden;
+}
+
+.admin-inline-editable:hover {
+  background: rgba(201, 164, 106, 0.1);
+}
+
+.admin-inline-editable:focus {
+  background: rgba(201, 164, 106, 0.16);
+  box-shadow: 0 0 0 1px var(--site-accent);
+}
+
+.admin-inline-editable::placeholder {
+  color: var(--site-muted);
+  opacity: 0.6;
+}
+
+/* Image edit-in-place: hover reveals an overlay over the actual image. */
+.admin-inline-image {
+  position: relative;
+  cursor: pointer;
+}
+
+.admin-inline-image-overlay {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 0.3rem;
+  background: rgba(0, 0, 0, 0.55);
+  color: #fff;
+  font-size: 0.75rem;
+  font-weight: 600;
+  letter-spacing: 0.04em;
+  opacity: 0;
+  transition: opacity 150ms ease;
+  border-radius: inherit;
+}
+
+.admin-inline-image:hover .admin-inline-image-overlay,
+.admin-inline-image:focus-within .admin-inline-image-overlay {
+  opacity: 1;
+}
+
+.admin-inline-image-empty {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 120px;
+  background: var(--site-bg-soft);
+  border: 1px dashed var(--site-border);
+  border-radius: 8px;
+}
+
+.admin-inline-image-empty .admin-inline-image-overlay {
+  position: static;
+  opacity: 1;
+  background: none;
+  color: var(--site-muted);
+}
+
+.admin-inline-image-input {
+  display: none;
+}
+
+/* Small "x" remove button overlaid on a rendered array item (a gallery
+   tile, a laurel image, a credit row) — appears on hover of the item. */
+.admin-inline-remove-btn {
+  position: absolute;
+  top: 0.35rem;
+  right: 0.35rem;
+  z-index: 5;
+  width: 24px;
+  height: 24px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border: none;
+  border-radius: 50%;
+  background: rgba(0, 0, 0, 0.65);
+  color: #ff9d9d;
+  cursor: pointer;
+  opacity: 0;
+  transition: opacity 150ms ease;
+}
+
+.admin-inline-item:hover .admin-inline-remove-btn,
+.admin-inline-remove-btn:focus {
+  opacity: 1;
+}
+
+.admin-inline-item {
+  position: relative;
+}
+
+/* An "add new item" tile matching the size/shape of whatever grid it
+   sits at the end of (gallery items, laurel images, etc). */
+.admin-inline-add-tile {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 0.3rem;
+  min-height: 100px;
+  background: var(--site-bg-soft);
+  border: 1px dashed var(--site-border);
+  border-radius: 8px;
+  color: var(--site-muted);
+  font-size: 0.8rem;
+  cursor: pointer;
+}
+
+.admin-inline-add-tile:hover {
+  border-color: var(--site-accent);
+  color: var(--site-accent);
+}
+
+/* Small anchored popover for editing a gallery item's type/URL — the one
+   place a tiny form beats trying to make every possible shape click-to-
+   edit (a video card visually morphing into a link card mid-edit isn't
+   something "in place" text-editing can express). */
+.admin-inline-popover-backdrop {
+  position: fixed;
+  inset: 0;
+  z-index: 60;
+}
+
+.admin-inline-popover {
+  position: absolute;
+  z-index: 61;
+  width: min(320px, 90vw);
+  background: var(--site-bg-elevated);
+  border: 1px solid var(--site-border);
+  border-radius: 8px;
+  padding: 0.9rem;
+  box-shadow: 0 12px 28px rgba(0, 0, 0, 0.5);
+}
+
+.admin-inline-popover label {
+  display: block;
+  font-size: 0.8rem;
+  font-weight: 600;
+  margin-bottom: 0.6rem;
+}
+
+.admin-inline-popover input,
+.admin-inline-popover select {
+  display: block;
+  width: 100%;
+  margin-top: 0.3rem;
+  padding: 0.4rem 0.5rem;
+  font-size: 0.85rem;
+  border: 1px solid var(--site-border);
+  border-radius: 6px;
+  background: var(--site-bg-soft);
+  color: var(--site-text);
+  font-family: var(--site-font-body);
+}
+
+.admin-inline-popover-actions {
+  display: flex;
+  justify-content: flex-end;
+  gap: 0.5rem;
+  margin-top: 0.4rem;
+}
+
+/* A compact inline field sized to its own content (via the `size`
+   attribute, see EditableText's sizeToContent) rather than stretching to
+   fill its container or clipping at a fixed width — for fields meant to
+   sit side-by-side with plain text, e.g. "ROLE · YEAR". */
+.admin-inline-editable-sized {
+  display: inline-block;
+  width: auto;
+}
+
+/* A labeled field with no natural on-page place to click (a URL that's
+   only ever used as an href, never shown as text; a boolean layout
+   flag) — same look as SchemaForm's .admin-field, so it reads as "this
+   one's a form field" rather than pretending to be inline content. */
+.admin-inline-plain-field {
+  display: block;
+  font-size: 0.8rem;
+  font-weight: 600;
+  color: var(--site-muted);
+  margin: 0.75rem 0;
+}
+
+.admin-inline-plain-field .admin-inline-editable {
+  display: block;
+  width: 100%;
+  margin-top: 0.3rem;
+  padding: 0.4rem 0.5rem;
+  border: 1px solid var(--site-border);
+  background: var(--site-bg-soft);
+  color: var(--site-text);
+  font-weight: normal;
+}
+
+.film-detail-laurel-add {
+  width: 80px;
+  height: 80px;
+  min-height: 0 !important;
+  flex-shrink: 0;
+  color: var(--site-muted);
+}

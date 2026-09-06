@@ -30,7 +30,7 @@ export interface MusicProject {
   soundcloudEmbedUrl?: string;
 }
 
-interface FlatMusicProject extends MusicProject {
+export interface FlatMusicProject extends MusicProject {
   groupId: 'featured-projects' | 'collaborations';
 }
 
@@ -56,10 +56,14 @@ const GROUP_META: Record<FlatMusicProject['groupId'], { title: string; descripti
   },
 };
 
-export const MUSIC_PROJECT_GROUPS: MusicProjectGroup[] = (
-  Object.keys(GROUP_META) as FlatMusicProject['groupId'][]
-).map((id) => ({
-  id,
-  ...GROUP_META[id],
-  projects: FLAT_PROJECTS.filter((project) => project.groupId === id),
-}));
+// Extracted so useMusicWork.ts can group live-fetched projects the exact
+// same way, instead of only ever grouping this file's static JSON.
+export function groupMusicProjects(projects: FlatMusicProject[]): MusicProjectGroup[] {
+  return (Object.keys(GROUP_META) as FlatMusicProject['groupId'][]).map((id) => ({
+    id,
+    ...GROUP_META[id],
+    projects: projects.filter((project) => project.groupId === id),
+  }));
+}
+
+export const MUSIC_PROJECT_GROUPS: MusicProjectGroup[] = groupMusicProjects(FLAT_PROJECTS);

@@ -1,10 +1,33 @@
 import { Container } from 'react-bootstrap';
 import { Link } from 'react-router-dom';
-import { MUSIC_PROJECT_GROUPS } from '../data/musicProjects';
+import { groupMusicProjects } from '../data/musicProjects';
+import { useMusicWork } from '../hooks/useMusicWork';
 import './MusicPage.css';
 
 function MusicPage() {
-  const [featuredProjects, collaborations] = MUSIC_PROJECT_GROUPS;
+  const { items, error } = useMusicWork();
+
+  if (items === null) {
+    return (
+      <main className="film-list-page music-page">
+        <Container style={{ padding: '4rem 1rem', textAlign: 'center' }}>
+          <p style={{ color: 'var(--site-muted)' }}>Loading…</p>
+        </Container>
+      </main>
+    );
+  }
+
+  if (error) {
+    return (
+      <main className="film-list-page music-page">
+        <Container style={{ padding: '4rem 1rem', textAlign: 'center' }}>
+          <p style={{ color: 'var(--site-muted)' }}>Couldn&apos;t load this page right now.</p>
+        </Container>
+      </main>
+    );
+  }
+
+  const [featuredProjects, collaborations] = groupMusicProjects(items);
 
   return (
     <main className="film-list-page music-page">

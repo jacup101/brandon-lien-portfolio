@@ -1,14 +1,36 @@
 import { Container } from 'react-bootstrap';
 import { Link } from 'react-router-dom';
-import { FILM_WORK } from '../data/filmWork';
 import FilmListRow from '../components/film/FilmListRow';
+import { useFilmWork } from '../hooks/useFilmWork';
 import './FilmPage.css';
 
 const CARD_SLUGS = new Set(['music-videos', 'music-session-videography', 'other-film-work']);
 
 const FilmPage = () => {
-  const rows = FILM_WORK.filter((item) => !CARD_SLUGS.has(item.slug));
-  const cards = FILM_WORK.filter((item) => CARD_SLUGS.has(item.slug));
+  const { items, error } = useFilmWork();
+
+  if (items === null) {
+    return (
+      <main className="film-list-page">
+        <Container style={{ padding: '4rem 1rem', textAlign: 'center' }}>
+          <p style={{ color: 'var(--site-muted)' }}>Loading…</p>
+        </Container>
+      </main>
+    );
+  }
+
+  if (error) {
+    return (
+      <main className="film-list-page">
+        <Container style={{ padding: '4rem 1rem', textAlign: 'center' }}>
+          <p style={{ color: 'var(--site-muted)' }}>Couldn&apos;t load this page right now.</p>
+        </Container>
+      </main>
+    );
+  }
+
+  const rows = items.filter((item) => !CARD_SLUGS.has(item.slug));
+  const cards = items.filter((item) => CARD_SLUGS.has(item.slug));
 
   return (
     <main className="film-list-page">

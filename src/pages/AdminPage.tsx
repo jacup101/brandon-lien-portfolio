@@ -1,10 +1,19 @@
 import { FormEvent, PointerEvent as ReactPointerEvent, useCallback, useEffect, useMemo, useRef, useState } from 'react';
+import { Container } from 'react-bootstrap';
 import { Link } from 'react-router-dom';
 import { LogOut, Pencil, Plus, Save as SaveIcon, Star, Trash } from 'lucide-react';
 import * as adminApi from '../lib/adminApi';
 import { AdminApiError } from '../lib/adminApi';
 import { publicAssetUrl } from '../lib/backendApi';
 import { compressImage } from '../lib/compressImage';
+import AboutContentView from '../components/about/AboutContentView';
+import CollectionAdminSection from '../components/admin/CollectionAdminSection';
+import DocumentAdminSection from '../components/admin/DocumentAdminSection';
+import FilmDetailView from '../components/film/FilmDetailView';
+import MusicDetailView from '../components/music/MusicDetailView';
+import { toAboutContent } from '../hooks/useAboutContent';
+import { toFilmItem } from '../hooks/useFilmWork';
+import { toMusicProject } from '../hooks/useMusicWork';
 import './AdminPage.css';
 
 interface PostSoundEntry {
@@ -130,17 +139,70 @@ const GOOGLE_SCRIPT_ID = 'google-identity-script';
 const TOKEN_STORAGE_KEY = 'admin-google-id-token';
 const GOOGLE_CLIENT_ID = import.meta.env.VITE_GOOGLE_CLIENT_ID;
 
-// Only post-sound is actually wired up to site-assets-backend right now
-// (see that repo's README) — film/music are listed so the nav reflects
-// where this is headed, but they're inert until there's a real collection
-// behind them.
-type AdminSectionId = 'post-sound' | 'film' | 'music';
+// Post-sound has its own bespoke UI below (drag-reorder + featured
+// filtering, built and polished before any other collection existed).
+// Film and Music are both wired up generically via CollectionAdminSection,
+// driven by whatever site-assets-backend's schema endpoint says each
+// collection looks like. About is a singleton "document" rather than a
+// collection of entries, so it uses DocumentAdminSection instead.
+type AdminSectionId = 'post-sound' | 'film' | 'music' | 'about';
 
 const ADMIN_SECTIONS: { id: AdminSectionId; label: string; comingSoon?: boolean }[] = [
   { id: 'post-sound', label: 'Post-Sound' },
-  { id: 'film', label: 'Film', comingSoon: true },
-  { id: 'music', label: 'Music', comingSoon: true },
+  { id: 'film', label: 'Film' },
+  { id: 'music', label: 'Music' },
+  { id: 'about', label: 'About' },
 ];
+
+// Film's editor: renders the exact same FilmDetailView the public
+// /film/:slug page uses, fed by the in-progress form values (via the same
+// toFilmItem mapping useFilmWork uses for real data). Passing `edit` here
+// is what turns every field on the rendered page into a click-to-edit
+// control instead of static content — see FilmDetailView/FilmEditContext.
+// Any other loaded film is passed along too, since a gallery "link" item
+// can point at another film and render as that film's own row.
+function renderFilmPreview(
+  formValue: Record<string, unknown>,
+  entries: adminApi.RemoteEntry[],
+  editingSlug: string | null,
+  onFieldChange: (key: string, value: unknown) => void,
+  token: string
+) {
+  const filmWork = entries.map(toFilmItem);
+  const previewItem = toFilmItem({ slug: editingSlug ?? '__preview__', data: formValue });
+  return (
+    <div className="film-detail-page admin-editor-preview-page">
+      <Container className="film-detail-container">
+        <FilmDetailView item={previewItem} filmWork={filmWork} edit={{ token, onFieldChange }} />
+      </Container>
+    </div>
+  );
+}
+
+// Same idea as renderFilmPreview, for Music's full-page editor.
+function renderMusicPreview(formValue: Record<string, unknown>, _entries: adminApi.RemoteEntry[], editingSlug: string | null) {
+  const previewProject = toMusicProject({ slug: editingSlug ?? '__preview__', data: formValue });
+  return (
+    <div className="film-detail-page music-detail-page admin-editor-preview-page">
+      <Container className="film-detail-container music-detail-container">
+        <MusicDetailView project={previewProject} />
+      </Container>
+    </div>
+  );
+}
+
+// Same idea as renderFilmPreview, for About's document editor. No other
+// entries to pass along here — About isn't a collection, just one thing.
+function renderAboutPreview(formValue: Record<string, unknown>) {
+  const previewContent = toAboutContent(formValue);
+  return (
+    <div className="about-page admin-editor-preview-page">
+      <Container>
+        <AboutContentView content={previewContent} />
+      </Container>
+    </div>
+  );
+}
 
 // Google's own "Sign in with Google" widget, loaded the same way this
 // project already loads Cloudflare Turnstile (see AboutPage.tsx): inject
@@ -677,7 +739,6 @@ function AdminPage() {
     );
   }
 
-  const activeSectionMeta = ADMIN_SECTIONS.find((section) => section.id === activeSection);
   const featuredEntries = entries?.filter((entry) => entry.featured) ?? [];
   const unfeaturedEntries = entries?.filter((entry) => !entry.featured) ?? [];
 
@@ -802,11 +863,35 @@ function AdminPage() {
       </aside>
 
       <div className="admin-content">
-        {activeSection !== 'post-sound' ? (
-          <div className="admin-coming-soon">
-            <h1>{activeSectionMeta?.label}</h1>
-            <p className="admin-page-subtitle">Editing for this section is coming soon.</p>
-          </div>
+        {activeSection === 'film' ? (
+          <CollectionAdminSection
+            collectionId="film"
+            label="Film"
+            titleKey="title"
+            imageKey="imgPath"
+            metaKeys={['role', 'year']}
+            blurbKey="blurb"
+            variant="film-rows"
+            editorMode="inline"
+            renderPreview={renderFilmPreview}
+            advancedFieldKeys={['blurb', 'imgContain', 'subtitleLayout', 'galleryColumns']}
+            token={token}
+            onApiError={handleApiError}
+          />
+        ) : activeSection === 'music' ? (
+          <CollectionAdminSection
+            collectionId="music"
+            label="Music"
+            titleKey="title"
+            imageKey="imgPath"
+            metaKeys={['role', 'year']}
+            editorMode="full-page"
+            renderPreview={renderMusicPreview}
+            token={token}
+            onApiError={handleApiError}
+          />
+        ) : activeSection === 'about' ? (
+          <DocumentAdminSection documentId="about" label="About" renderPreview={renderAboutPreview} token={token} onApiError={handleApiError} />
         ) : loadError ? (
           <>
             <p className="admin-status admin-status-error">{loadError}</p>
